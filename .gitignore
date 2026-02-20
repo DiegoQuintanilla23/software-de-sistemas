@@ -1,0 +1,35 @@
+# Ignorar archivos y carpetas dentro de la carpeta del proyecto
+ProyectoSoftwareSistemas/*.dll
+ProyectoSoftwareSistemas/*.pdb
+
+# Archivos de usuario y configuración local
+ProyectoSoftwareSistemas/.vs/
+ProyectoSoftwareSistemas/*.user
+ProyectoSoftwareSistemas/*.suo
+ProyectoSoftwareSistemas/*.userosscache
+ProyectoSoftwareSistemas/*.userprefs
+
+# Archivos de publicación y despliegue
+ProyectoSoftwareSistemas/publish/
+ProyectoSoftwareSistemas/*.PublishProfiles/
+
+# Logs y archivos temporales
+ProyectoSoftwareSistemas/*.log
+ProyectoSoftwareSistemas/*.cache
+ProyectoSoftwareSistemas/*.temp
+ProyectoSoftwareSistemas/*.tmp
+ProyectoSoftwareSistemas/debug.log
+
+# Archivos específicos de Rider/JetBrains
+ProyectoSoftwareSistemas/.idea/
+ProyectoSoftwareSistemas/*.idea/
+ProyectoSoftwareSistemas/*.iml
+
+# Archivos de configuración para IDE
+ProyectoSoftwareSistemas/*.vsconfig
+
+# Archivos generados por la plataforma
+ProyectoSoftwareSistemas/!.gitignore
+
+# Ignorar configuración de Visual Studio
+.vs/

@@ -1,0 +1,17 @@
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\02\QuintanillaEscalante_Practica03\bin\Debug\QuintanillaEscalante_Practica03.exe.config
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\02\QuintanillaEscalante_Practica03\bin\Debug\QuintanillaEscalante_Practica03.exe
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\02\QuintanillaEscalante_Practica03\bin\Debug\QuintanillaEscalante_Practica03.pdb
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\02\QuintanillaEscalante_Practica03\obj\Debug\QuintanillaEscalante_Practica03.csproj.AssemblyReference.cache
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\02\QuintanillaEscalante_Practica03\obj\Debug\QuintanillaEscalante_Practica03.csproj.CoreCompileInputs.cache
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\02\QuintanillaEscalante_Practica03\obj\Debug\QuintanillaEscalante_Practica03.exe
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\02\QuintanillaEscalante_Practica03\obj\Debug\QuintanillaEscalante_Practica03.pdb
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\02\QuintanillaEscalante_Practica03\bin\Debug\Antlr4.Runtime.dll
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\02\QuintanillaEscalante_Practica03\bin\Debug\Antlr4.Runtime.xml
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\02\QuintanillaEscalante_Practica03\obj\Debug\Quintani.DCB270E2.Up2Date
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\02\QuintanillaEscalante_Practica03\obj\Debug\SICXELexer.cs
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\02\QuintanillaEscalante_Practica03\obj\Debug\SICXEParser.cs
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\02\QuintanillaEscalante_Practica03\obj\Debug\SICXEListener.cs
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\02\QuintanillaEscalante_Practica03\obj\Debug\SICXEBaseListener.cs
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\02\QuintanillaEscalante_Practica03\obj\Debug\SICXEVisitor.cs
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\02\QuintanillaEscalante_Practica03\obj\Debug\SICXEBaseVisitor.cs
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\02\QuintanillaEscalante_Practica03\obj\Debug\QuintanillaEscalante_Practica03.csproj.Antlr4GeneratedCodeFileListAbsolute.txt

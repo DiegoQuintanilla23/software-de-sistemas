@@ -1,0 +1,17 @@
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\bin\Debug\Antlr4.Runtime.dll
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\bin\Debug\Antlr4.Runtime.xml
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\ProyectoSoftwareSistemas.csproj.AssemblyReference.cache
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\SICXELexer.cs
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\SICXEParser.cs
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\SICXEListener.cs
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\SICXEBaseListener.cs
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\SICXEVisitor.cs
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\SICXEBaseVisitor.cs
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\ProyectoSoftwareSistemas.csproj.Antlr4GeneratedCodeFileListAbsolute.txt
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\ProyectoSoftwareSistemas.csproj.CoreCompileInputs.cache
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\Proyecto.5B71E502.Up2Date
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\bin\Debug\ProyectoSoftwareSistemas.exe.config
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\bin\Debug\ProyectoSoftwareSistemas.exe
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\bin\Debug\ProyectoSoftwareSistemas.pdb
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\ProyectoSoftwareSistemas.exe
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\ProyectoSoftwareSistemas.pdb
