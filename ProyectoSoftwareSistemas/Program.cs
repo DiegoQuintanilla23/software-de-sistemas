@@ -105,6 +105,17 @@ namespace ProyectoSoftwareSistemas
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine(tree.ToStringTree(parser));
                     Console.ResetColor();
+
+                    var root = tree as SICXEParser.ProgramContext;
+
+                    var generador = new GeneradorArchivoIntermedio(root);
+
+                    var lineas = generador.GenerarLineas();
+
+                    generador.GenerarExcel(lineas);
+
+                    Console.WriteLine("\n\n\n\n****** Archivo intermedio generado ******");
+                    generador.ImprimirTABSIM();
                 }
                 catch (Exception ex)
                 {
