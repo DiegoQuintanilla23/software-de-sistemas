@@ -1,6 +1,6 @@
-C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\SICXELexer.cs
-C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\SICXEParser.cs
-C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\SICXEListener.cs
-C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\SICXEBaseListener.cs
-C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\SICXEVisitor.cs
-C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\SICXEBaseVisitor.cs
+C:\Users\vils1\OneDrive\Escritorio\Uni\Semestre 10\FSWS\Laboratorio\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\SICXELexer.cs
+C:\Users\vils1\OneDrive\Escritorio\Uni\Semestre 10\FSWS\Laboratorio\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\SICXEParser.cs
+C:\Users\vils1\OneDrive\Escritorio\Uni\Semestre 10\FSWS\Laboratorio\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\SICXEListener.cs
+C:\Users\vils1\OneDrive\Escritorio\Uni\Semestre 10\FSWS\Laboratorio\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\SICXEBaseListener.cs
+C:\Users\vils1\OneDrive\Escritorio\Uni\Semestre 10\FSWS\Laboratorio\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\SICXEVisitor.cs
+C:\Users\vils1\OneDrive\Escritorio\Uni\Semestre 10\FSWS\Laboratorio\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\SICXEBaseVisitor.cs
