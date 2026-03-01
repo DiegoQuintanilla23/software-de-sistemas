@@ -40,7 +40,7 @@ extendedInstr
 /* FORMATOS */
 
 f1
-    : OPCODE_F1
+    : OPCODE_F1 value?
     ;
 
 f2

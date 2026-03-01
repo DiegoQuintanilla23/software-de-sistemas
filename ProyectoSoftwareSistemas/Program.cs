@@ -112,7 +112,7 @@ namespace ProyectoSoftwareSistemas
 
                     var lineas = generador.GenerarLineas();
 
-                    generador.GenerarExcel(lineas);
+                    generador.GenerarExcel(lineas, nombreArchivo);
 
                     Console.WriteLine("\n\n\n\n****** Archivo intermedio generado ******");
                     generador.ImprimirTABSIM();

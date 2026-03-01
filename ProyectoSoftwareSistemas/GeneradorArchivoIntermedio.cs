@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using ClosedXML.Excel;
+using System.IO;
 
 namespace ProyectoSoftwareSistemas
 {
@@ -56,14 +57,16 @@ namespace ProyectoSoftwareSistemas
 
                 if (!string.IsNullOrEmpty(nueva.Etiqueta))
                 {
+                    bool esStart = linea.statement().directive() != null && linea.statement().directive().DIRECTIVE().GetText() == "START";
                     if (TABSIM.ContainsKey(nueva.Etiqueta))
                     {
-                        nueva.Errores = "Símbolo duplicado";
+                        nueva.Errores = "Error: Símbolo duplicado";
                         hayErrorSemantico = true;
                     }
                     else
                     {
-                        insertarEnTabSim = true;
+                        if(!esStart)
+                            insertarEnTabSim = true;
                     }
                 }
 
@@ -114,19 +117,19 @@ namespace ProyectoSoftwareSistemas
                     // FORMATO 1
                     else if (stmt.instruction()?.f1() != null)
                     {
-                        var instruccion = stmt.instruction();
+                        var f1 = stmt.instruction().f1();
 
-                        nueva.CodigoOp = instruccion.f1().OPCODE_F1().GetText();
+                        nueva.CodigoOp = f1.OPCODE_F1().GetText();
                         nueva.Formato = "1";
                         nueva.ModoDireccionamiento = "-";
 
-                        // 🔥 Si tiene más de un hijo, hay algo extra (operando inválido)
-                        if (instruccion.ChildCount > 1)
+                        // Si existe value → es error
+                        if (f1.value() != null)
                         {
-                            // El hijo 1 sería lo que sigue después del opcode
-                            nueva.Operador = instruccion.GetChild(1).GetText();
-                            nueva.Errores = "Error de sintaxis";
+                            nueva.Operador = f1.value().GetText();
+                            nueva.Errores = "Error: Sintaxis";
                             hayErrorSintactico = true;
+                            insertarEnTabSim = false;
                         }
 
                         if (!hayErrorSintactico)
@@ -167,8 +170,9 @@ namespace ProyectoSoftwareSistemas
                             }
                             else
                             {
-                                nueva.Errores = "Operando inválido en RESB";
+                                nueva.Errores = "Error: Operando inválido en RESB";
                                 hayErrorSintactico = true;
+                                insertarEnTabSim = false;
                             }
                         }
 
@@ -181,8 +185,9 @@ namespace ProyectoSoftwareSistemas
                             }
                             else
                             {
-                                nueva.Errores = "Operando inválido en RESW";
+                                nueva.Errores = "Error: Operando inválido en RESW";
                                 hayErrorSintactico = true;
+                                insertarEnTabSim = false;
                             }
                         }
 
@@ -203,8 +208,9 @@ namespace ProyectoSoftwareSistemas
 
                                 if (longitud % 2 != 0)
                                 {
-                                    nueva.Errores = "Error de sintaxis";
+                                    nueva.Errores = "Error: Sintaxis";
                                     hayErrorSintactico = true;
+                                    insertarEnTabSim = false;
                                 }
                                 else
                                 {
@@ -214,15 +220,17 @@ namespace ProyectoSoftwareSistemas
                             }
                             else
                             {
-                                nueva.Errores = "Error de sintaxis";
+                                nueva.Errores = "Error: Sintaxis";
                                 hayErrorSintactico = true;
+                                insertarEnTabSim = false;
                             }
                         }
                     }
                     else
                     {
-                        nueva.Errores = "Instrucción no existe";
+                        nueva.Errores = "Error: Instrucción no existe";
                         hayErrorSintactico = true;
+                        insertarEnTabSim = false;
                     }
                 }
 
@@ -267,7 +275,7 @@ namespace ProyectoSoftwareSistemas
             return int.TryParse(texto, out valor);
         }
 
-        public void GenerarExcel(List<LineaIntermedia> lineas)
+        public void GenerarExcel(List<LineaIntermedia> lineas, string nombreArchivo)
         {
             var workbook = new XLWorkbook();
             var worksheet = workbook.Worksheets.Add("ArchivoIntermedio");
@@ -297,7 +305,13 @@ namespace ProyectoSoftwareSistemas
                 fila++;
             }
 
-            workbook.SaveAs("ArchivoIntermedio.xlsx");
+            string nombreSinExtension = Path.GetFileNameWithoutExtension(nombreArchivo);
+            string nuevoNombre = nombreSinExtension + "_ArchivoIntermedio.xlsx";
+            string carpetaRaiz = Directory.GetCurrentDirectory();
+            carpetaRaiz = carpetaRaiz+ "\\output\\";
+            string rutaFinal = Path.Combine(carpetaRaiz, nuevoNombre);
+
+            workbook.SaveAs(rutaFinal);
         }
 
         private void ProcesarModoDireccionamiento(LineaIntermedia nueva, SICXEParser.F3OperandsContext ops)
