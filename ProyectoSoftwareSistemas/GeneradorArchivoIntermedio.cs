@@ -308,10 +308,11 @@ namespace ProyectoSoftwareSistemas
             string nombreSinExtension = Path.GetFileNameWithoutExtension(nombreArchivo);
             string nuevoNombre = nombreSinExtension + "_ArchivoIntermedio.xlsx";
             string carpetaRaiz = Directory.GetCurrentDirectory();
-            carpetaRaiz = carpetaRaiz+ "\\output\\";
+            carpetaRaiz = carpetaRaiz + "\\output\\";
             string rutaFinal = Path.Combine(carpetaRaiz, nuevoNombre);
 
             workbook.SaveAs(rutaFinal);
+            GeneradorCodigoObjeto codObjGen = new GeneradorCodigoObjeto(TABSIM, rutaFinal);
         }
 
         private void ProcesarModoDireccionamiento(LineaIntermedia nueva, SICXEParser.F3OperandsContext ops)
