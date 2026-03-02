@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using ClosedXML.Excel;
 using System.IO;
 
+
 namespace ProyectoSoftwareSistemas
 {
     public class LineaIntermedia
@@ -19,6 +20,7 @@ namespace ProyectoSoftwareSistemas
         public string Formato { get; set; } = "";
         public string ModoDireccionamiento { get; set; } = "";
         public string Errores { get; set; } = "";
+        public string CodigoObjeto { get; set; } = "";
     }
     public class GeneradorArchivoIntermedio
     {
@@ -288,6 +290,7 @@ namespace ProyectoSoftwareSistemas
             worksheet.Cell(1, 6).Value = "Formato de Instruccion";
             worksheet.Cell(1, 7).Value = "Modo de Direccionamiento";
             worksheet.Cell(1, 8).Value = "Errores";
+            worksheet.Cell(1, 9).Value = "Codigo Objeto";
 
             int fila = 2;
 
@@ -301,6 +304,7 @@ namespace ProyectoSoftwareSistemas
                 worksheet.Cell(fila, 6).Value = l.Formato;
                 worksheet.Cell(fila, 7).Value = l.ModoDireccionamiento;
                 worksheet.Cell(fila, 8).Value = l.Errores;            // ← ERRORES
+                worksheet.Cell(fila, 9).Value = l.CodigoObjeto;       // ← CODIGO 
 
                 fila++;
             }
@@ -308,10 +312,11 @@ namespace ProyectoSoftwareSistemas
             string nombreSinExtension = Path.GetFileNameWithoutExtension(nombreArchivo);
             string nuevoNombre = nombreSinExtension + "_ArchivoIntermedio.xlsx";
             string carpetaRaiz = Directory.GetCurrentDirectory();
-            carpetaRaiz = carpetaRaiz+ "\\output\\";
+            carpetaRaiz = carpetaRaiz + "\\output\\";
             string rutaFinal = Path.Combine(carpetaRaiz, nuevoNombre);
 
             workbook.SaveAs(rutaFinal);
+            GeneradorCodigoObjeto codObjGen = new GeneradorCodigoObjeto(TABSIM, rutaFinal);
         }
 
         private void ProcesarModoDireccionamiento(LineaIntermedia nueva, SICXEParser.F3OperandsContext ops)
@@ -353,6 +358,11 @@ namespace ProyectoSoftwareSistemas
             }
 
             Console.WriteLine("\n========================================\n");
+        }
+
+        public Dictionary<string, string> GetTabSim()
+        {
+            return this.TABSIM;
         }
     }
 }

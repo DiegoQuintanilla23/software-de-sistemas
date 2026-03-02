@@ -108,14 +108,20 @@ namespace ProyectoSoftwareSistemas
 
                     var root = tree as SICXEParser.ProgramContext;
 
-                    var generador = new GeneradorArchivoIntermedio(root);
+                    var generadorIntermedio = new GeneradorArchivoIntermedio(root);
 
-                    var lineas = generador.GenerarLineas();
+                    //var lineas = generador.GenerarLineas();
 
-                    generador.GenerarExcel(lineas, nombreArchivo);
+                    List<LineaIntermedia> lineas = generadorIntermedio.GenerarLineas();
+                    Dictionary<string, string> tambsim = generadorIntermedio.GetTabSim();
+
+                    var generadorCodigoObjeto = new GeneradorCodigoObjeto(lineas, tambsim);
+                    generadorCodigoObjeto.Generar();
+
+                    generadorIntermedio.GenerarExcel(lineas, nombreArchivo);
 
                     Console.WriteLine("\n\n\n\n****** Archivo intermedio generado ******");
-                    generador.ImprimirTABSIM();
+                    generadorIntermedio.ImprimirTABSIM();
                 }
                 catch (Exception ex)
                 {
