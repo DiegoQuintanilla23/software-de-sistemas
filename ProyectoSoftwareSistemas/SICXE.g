@@ -91,6 +91,7 @@ value
     | NUMBER
     | HEX
     | CHAR_LITERAL
+    | HEX_LITERAL
     ;
 
 /* TOKENS AUXILIARES */
@@ -138,7 +139,12 @@ REG
     ;
 
 /* TOKENS BÁSICOS */
-
+HEX_LITERAL
+    : 'X\'' [0-9A-F]+ '\''
+    ;
+CHAR_LITERAL
+    : 'C\'' (~['\r\n'])* '\''
+    ;
 ID
     : [A-Z][A-Z0-9]*
     ;
@@ -149,11 +155,6 @@ NUMBER
 
 HEX
     : [0-9A-F]+ 'H'
-    ;
-
-
-CHAR_LITERAL
-    : 'C\'' (~['\r\n'])* '\''
     ;
 
 /* COMENTARIOS Y CONTROL */

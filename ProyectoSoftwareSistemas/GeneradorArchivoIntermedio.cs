@@ -206,19 +206,25 @@ namespace ProyectoSoftwareSistemas
                             }
                             else if (op.StartsWith("X'") && op.EndsWith("'"))
                             {
-                                int longitud = op.Length - 3;
+                                string contenido = op.Substring(2, op.Length - 3); // quitar X' '
 
-                                if (longitud % 2 != 0)
+                                // Validar que solo tenga hex válidos
+                                if (!System.Text.RegularExpressions.Regex.IsMatch(contenido, "^[0-9A-F]+$"))
                                 {
-                                    nueva.Errores = "Error: Sintaxis";
+                                    nueva.Errores = "Error: Literal hexadecimal inválido";
                                     hayErrorSintactico = true;
                                     insertarEnTabSim = false;
                                 }
-                                else
+
+                                // Si es impar, completar con 0 a la izquierda
+                                if (contenido.Length % 2 != 0)
                                 {
-                                    if (!hayErrorSintactico)
-                                        contadorPrograma += longitud / 2;
+                                    contenido = "0" + contenido;
+                                    op = "X'" + contenido + "'";
                                 }
+
+                                if (!hayErrorSintactico)
+                                    contadorPrograma += contenido.Length / 2;
                             }
                             else
                             {
@@ -279,6 +285,8 @@ namespace ProyectoSoftwareSistemas
 
         public void GenerarExcel(List<LineaIntermedia> lineas, string nombreArchivo)
         {
+            GeneradorCodigoObjeto codObjGen = new GeneradorCodigoObjeto(TABSIM, lineas);
+            codObjGen.Generar();
             var workbook = new XLWorkbook();
             var worksheet = workbook.Worksheets.Add("ArchivoIntermedio");
 
@@ -297,15 +305,14 @@ namespace ProyectoSoftwareSistemas
             foreach (var l in lineas)
             {
                 worksheet.Cell(fila, 1).Value = l.NumeroLinea;
-                worksheet.Cell(fila, 2).Value = l.ContadorPrograma;   // ← CP
+                worksheet.Cell(fila, 2).Value = l.ContadorPrograma;
                 worksheet.Cell(fila, 3).Value = l.Etiqueta;
                 worksheet.Cell(fila, 4).Value = l.CodigoOp;
                 worksheet.Cell(fila, 5).Value = l.Operador;
                 worksheet.Cell(fila, 6).Value = l.Formato;
                 worksheet.Cell(fila, 7).Value = l.ModoDireccionamiento;
-                worksheet.Cell(fila, 8).Value = l.Errores;            // ← ERRORES
-                worksheet.Cell(fila, 9).Value = l.CodigoObjeto;       // ← CODIGO 
-
+                worksheet.Cell(fila, 8).Value = l.Errores;
+                worksheet.Cell(fila, 9).Value = l.CodigoObjeto;
                 fila++;
             }
 
@@ -316,7 +323,6 @@ namespace ProyectoSoftwareSistemas
             string rutaFinal = Path.Combine(carpetaRaiz, nuevoNombre);
 
             workbook.SaveAs(rutaFinal);
-            GeneradorCodigoObjeto codObjGen = new GeneradorCodigoObjeto(TABSIM, rutaFinal);
         }
 
         private void ProcesarModoDireccionamiento(LineaIntermedia nueva, SICXEParser.F3OperandsContext ops)

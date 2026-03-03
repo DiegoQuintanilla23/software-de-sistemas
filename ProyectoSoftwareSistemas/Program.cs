@@ -115,9 +115,6 @@ namespace ProyectoSoftwareSistemas
                     List<LineaIntermedia> lineas = generadorIntermedio.GenerarLineas();
                     Dictionary<string, string> tambsim = generadorIntermedio.GetTabSim();
 
-                    var generadorCodigoObjeto = new GeneradorCodigoObjeto(lineas, tambsim);
-                    generadorCodigoObjeto.Generar();
-
                     generadorIntermedio.GenerarExcel(lineas, nombreArchivo);
 
                     Console.WriteLine("\n\n\n\n****** Archivo intermedio generado ******");
