@@ -1,11 +1,12 @@
-﻿using System;
+﻿using ClosedXML.Excel;
+using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using ClosedXML.Excel;
-using System.IO;
 
 
 namespace ProyectoSoftwareSistemas
@@ -283,10 +284,8 @@ namespace ProyectoSoftwareSistemas
             return int.TryParse(texto, out valor);
         }
 
-        public void GenerarExcel(List<LineaIntermedia> lineas, string nombreArchivo)
+        public void GenerarExcel(List<LineaIntermedia> lineas, List<string> programaObjeto, string nombreArchivo)
         {
-            GeneradorCodigoObjeto codObjGen = new GeneradorCodigoObjeto(TABSIM, lineas);
-            codObjGen.Generar();
             var workbook = new XLWorkbook();
             var worksheet = workbook.Worksheets.Add("ArchivoIntermedio");
 
@@ -314,6 +313,21 @@ namespace ProyectoSoftwareSistemas
                 worksheet.Cell(fila, 8).Value = l.Errores;
                 worksheet.Cell(fila, 9).Value = l.CodigoObjeto;
                 fila++;
+            }
+
+            //Hoja 2, progama objeto
+            if (programaObjeto != null && programaObjeto.Count > 0)
+            {
+                var wsObjeto = workbook.Worksheets.Add("ProgramaObjeto");
+
+                int filaObj = 1;
+                foreach (string registro in programaObjeto)
+					{
+                    wsObjeto.Cell(filaObj, 1).Value = registro;
+                    filaObj++;
+                }
+
+                wsObjeto.Column(1).AdjustToContents();
             }
 
             string nombreSinExtension = Path.GetFileNameWithoutExtension(nombreArchivo);

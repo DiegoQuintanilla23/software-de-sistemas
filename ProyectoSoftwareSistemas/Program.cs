@@ -108,16 +108,25 @@ namespace ProyectoSoftwareSistemas
 
                     var root = tree as SICXEParser.ProgramContext;
 
+                    // --- PASADA 1: Generación de direcciones ---
                     var generadorIntermedio = new GeneradorArchivoIntermedio(root);
-
-                    //var lineas = generador.GenerarLineas();
-
                     List<LineaIntermedia> lineas = generadorIntermedio.GenerarLineas();
-                    Dictionary<string, string> tambsim = generadorIntermedio.GetTabSim();
+                    Dictionary<string, string> tabsim = generadorIntermedio.GetTabSim();
 
-                    generadorIntermedio.GenerarExcel(lineas, nombreArchivo);
+                    // --- PASADA 2: Generación de Código Objeto (Hexadecimales) ---
+                    var generadorCodigoObjeto = new GeneradorCodigoObjeto(tabsim, lineas);
+                    generadorCodigoObjeto.Generar();
 
-                    Console.WriteLine("\n\n\n\n****** Archivo intermedio generado ******");
+                    // --- PASADA 3: Creación de Registros (H, T, M, E) ---
+                    var generadorProgramaObjeto = new GeneradorProgramaObjeto(lineas, tabsim);
+                    List<string> archivoObjeto = generadorProgramaObjeto.Generar();
+
+                    // --- SALIDA: Excel con 2 Pestañas ---
+                    generadorIntermedio.GenerarExcel(lineas, archivoObjeto, nombreArchivo);
+
+                    Console.WriteLine("\n\n****** Proceso de Ensamblado Finalizado ******");
+                    Console.WriteLine("Archivo Excel generado con éxito (contiene Archivo Intermedio y Programa Objeto).");
+
                     generadorIntermedio.ImprimirTABSIM();
                 }
                 catch (Exception ex)
