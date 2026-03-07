@@ -89,6 +89,7 @@
   <ItemGroup>
     <Compile Include="GeneradorArchivoIntermedio.cs" />
     <Compile Include="GeneradorCodigoObjeto.cs" />
+    <Compile Include="GeneradorProgramaObjeto.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
