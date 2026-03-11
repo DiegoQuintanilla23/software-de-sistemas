@@ -166,6 +166,58 @@ public partial class SICXEBaseListener : ISICXEListener {
 	public virtual void ExitF3Operands([NotNull] SICXEParser.F3OperandsContext context) { }
 
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="SICXEParser.f2_oneReg"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterF2_oneReg([NotNull] SICXEParser.F2_oneRegContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SICXEParser.f2_oneReg"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitF2_oneReg([NotNull] SICXEParser.F2_oneRegContext context) { }
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SICXEParser.f2_twoReg"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterF2_twoReg([NotNull] SICXEParser.F2_twoRegContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SICXEParser.f2_twoReg"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitF2_twoReg([NotNull] SICXEParser.F2_twoRegContext context) { }
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SICXEParser.f2_regNum"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterF2_regNum([NotNull] SICXEParser.F2_regNumContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SICXEParser.f2_regNum"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitF2_regNum([NotNull] SICXEParser.F2_regNumContext context) { }
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SICXEParser.f2_num"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterF2_num([NotNull] SICXEParser.F2_numContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SICXEParser.f2_num"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitF2_num([NotNull] SICXEParser.F2_numContext context) { }
+
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="SICXEParser.simpleOperand"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>

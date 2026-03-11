@@ -31,27 +31,31 @@ using DFA = Antlr4.Runtime.Dfa.DFA;
 [System.CLSCompliant(false)]
 public partial class SICXEParser : Parser {
 	public const int
-		PLUS=1, COMMA=2, HASH=3, AT=4, OPCODE_F1=5, OPCODE_F2=6, OPCODE_F3=7, 
-		DIRECTIVE=8, REG=9, HEX_LITERAL=10, CHAR_LITERAL=11, ID=12, NUMBER=13, 
-		HEX=14, COMMENT=15, NEWLINE=16, WS=17;
+		PLUS=1, COMMA=2, HASH=3, AT=4, OPCODE_F1=5, OPCODE_F2_1REG=6, OPCODE_F2_2REG=7, 
+		OPCODE_F2_REGNUM=8, OPCODE_F2_NUM=9, OPCODE_F3=10, DIRECTIVE=11, REG=12, 
+		HEX_LITERAL=13, CHAR_LITERAL=14, ID=15, NUMBER=16, HEX=17, COMMENT=18, 
+		NEWLINE=19, WS=20;
 	public const int
 		RULE_program = 0, RULE_line = 1, RULE_statement = 2, RULE_label = 3, RULE_instruction = 4, 
 		RULE_extendedInstr = 5, RULE_f1 = 6, RULE_f2 = 7, RULE_f3 = 8, RULE_f3Operands = 9, 
-		RULE_simpleOperand = 10, RULE_indexedOperand = 11, RULE_immediateOperand = 12, 
-		RULE_indirectOperand = 13, RULE_directive = 14, RULE_value = 15;
+		RULE_f2_oneReg = 10, RULE_f2_twoReg = 11, RULE_f2_regNum = 12, RULE_f2_num = 13, 
+		RULE_simpleOperand = 14, RULE_indexedOperand = 15, RULE_immediateOperand = 16, 
+		RULE_indirectOperand = 17, RULE_directive = 18, RULE_value = 19;
 	public static readonly string[] ruleNames = {
 		"program", "line", "statement", "label", "instruction", "extendedInstr", 
-		"f1", "f2", "f3", "f3Operands", "simpleOperand", "indexedOperand", "immediateOperand", 
-		"indirectOperand", "directive", "value"
+		"f1", "f2", "f3", "f3Operands", "f2_oneReg", "f2_twoReg", "f2_regNum", 
+		"f2_num", "simpleOperand", "indexedOperand", "immediateOperand", "indirectOperand", 
+		"directive", "value"
 	};
 
 	private static readonly string[] _LiteralNames = {
-		null, "'+'", "','", "'#'", "'@'"
+		null, "'+'", "','", "'#'", "'@'", null, null, null, null, "'SVC'"
 	};
 	private static readonly string[] _SymbolicNames = {
-		null, "PLUS", "COMMA", "HASH", "AT", "OPCODE_F1", "OPCODE_F2", "OPCODE_F3", 
-		"DIRECTIVE", "REG", "HEX_LITERAL", "CHAR_LITERAL", "ID", "NUMBER", "HEX", 
-		"COMMENT", "NEWLINE", "WS"
+		null, "PLUS", "COMMA", "HASH", "AT", "OPCODE_F1", "OPCODE_F2_1REG", "OPCODE_F2_2REG", 
+		"OPCODE_F2_REGNUM", "OPCODE_F2_NUM", "OPCODE_F3", "DIRECTIVE", "REG", 
+		"HEX_LITERAL", "CHAR_LITERAL", "ID", "NUMBER", "HEX", "COMMENT", "NEWLINE", 
+		"WS"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -139,20 +143,20 @@ public partial class SICXEParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 35;
+			State = 43;
 			_errHandler.Sync(this);
 			_la = _input.La(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << PLUS) | (1L << OPCODE_F1) | (1L << OPCODE_F2) | (1L << OPCODE_F3) | (1L << DIRECTIVE) | (1L << ID))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << PLUS) | (1L << OPCODE_F1) | (1L << OPCODE_F2_1REG) | (1L << OPCODE_F2_2REG) | (1L << OPCODE_F2_REGNUM) | (1L << OPCODE_F2_NUM) | (1L << OPCODE_F3) | (1L << DIRECTIVE) | (1L << ID))) != 0)) {
 				{
 				{
-				State = 32; line();
+				State = 40; line();
 				}
 				}
-				State = 37;
+				State = 45;
 				_errHandler.Sync(this);
 				_la = _input.La(1);
 			}
-			State = 38; Match(Eof);
+			State = 46; Match(Eof);
 			}
 		}
 		catch (RecognitionException re) {
@@ -202,17 +206,17 @@ public partial class SICXEParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 41;
+			State = 49;
 			_errHandler.Sync(this);
 			_la = _input.La(1);
 			if (_la==ID) {
 				{
-				State = 40; label();
+				State = 48; label();
 				}
 			}
 
-			State = 43; statement();
-			State = 44; Match(NEWLINE);
+			State = 51; statement();
+			State = 52; Match(NEWLINE);
 			}
 		}
 		catch (RecognitionException re) {
@@ -261,27 +265,30 @@ public partial class SICXEParser : Parser {
 		StatementContext _localctx = new StatementContext(_ctx, State);
 		EnterRule(_localctx, 4, RULE_statement);
 		try {
-			State = 49;
+			State = 57;
 			_errHandler.Sync(this);
 			switch (_input.La(1)) {
 			case PLUS:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 46; extendedInstr();
+				State = 54; extendedInstr();
 				}
 				break;
 			case OPCODE_F1:
-			case OPCODE_F2:
+			case OPCODE_F2_1REG:
+			case OPCODE_F2_2REG:
+			case OPCODE_F2_REGNUM:
+			case OPCODE_F2_NUM:
 			case OPCODE_F3:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 47; instruction();
+				State = 55; instruction();
 				}
 				break;
 			case DIRECTIVE:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 48; directive();
+				State = 56; directive();
 				}
 				break;
 			default:
@@ -328,7 +335,7 @@ public partial class SICXEParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 51; Match(ID);
+			State = 59; Match(ID);
 			}
 		}
 		catch (RecognitionException re) {
@@ -377,25 +384,28 @@ public partial class SICXEParser : Parser {
 		InstructionContext _localctx = new InstructionContext(_ctx, State);
 		EnterRule(_localctx, 8, RULE_instruction);
 		try {
-			State = 56;
+			State = 64;
 			_errHandler.Sync(this);
 			switch (_input.La(1)) {
 			case OPCODE_F1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 53; f1();
+				State = 61; f1();
 				}
 				break;
-			case OPCODE_F2:
+			case OPCODE_F2_1REG:
+			case OPCODE_F2_2REG:
+			case OPCODE_F2_REGNUM:
+			case OPCODE_F2_NUM:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 54; f2();
+				State = 62; f2();
 				}
 				break;
 			case OPCODE_F3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 55; f3();
+				State = 63; f3();
 				}
 				break;
 			default:
@@ -445,8 +455,8 @@ public partial class SICXEParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 58; Match(PLUS);
-			State = 59; f3();
+			State = 66; Match(PLUS);
+			State = 67; f3();
 			}
 		}
 		catch (RecognitionException re) {
@@ -494,19 +504,19 @@ public partial class SICXEParser : Parser {
 		EnterRule(_localctx, 12, RULE_f1);
 		int _la;
 		try {
-			State = 69;
+			State = 77;
 			_errHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(_input,6,_ctx) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 61; Match(OPCODE_F1);
-				State = 63;
+				State = 69; Match(OPCODE_F1);
+				State = 71;
 				_errHandler.Sync(this);
 				_la = _input.La(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << HASH) | (1L << AT) | (1L << HEX_LITERAL) | (1L << CHAR_LITERAL) | (1L << ID) | (1L << NUMBER) | (1L << HEX))) != 0)) {
 					{
-					State = 62; f3Operands();
+					State = 70; f3Operands();
 					}
 				}
 
@@ -516,13 +526,13 @@ public partial class SICXEParser : Parser {
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 65; Match(OPCODE_F1);
-				State = 67;
+				State = 73; Match(OPCODE_F1);
+				State = 75;
 				_errHandler.Sync(this);
 				_la = _input.La(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << HEX_LITERAL) | (1L << CHAR_LITERAL) | (1L << ID) | (1L << NUMBER) | (1L << HEX))) != 0)) {
 					{
-					State = 66; value();
+					State = 74; value();
 					}
 				}
 
@@ -542,13 +552,18 @@ public partial class SICXEParser : Parser {
 	}
 
 	public partial class F2Context : ParserRuleContext {
-		public ITerminalNode OPCODE_F2() { return GetToken(SICXEParser.OPCODE_F2, 0); }
-		public ITerminalNode[] REG() { return GetTokens(SICXEParser.REG); }
-		public ITerminalNode REG(int i) {
-			return GetToken(SICXEParser.REG, i);
+		public F2_oneRegContext f2_oneReg() {
+			return GetRuleContext<F2_oneRegContext>(0);
 		}
-		public ITerminalNode COMMA() { return GetToken(SICXEParser.COMMA, 0); }
-		public ITerminalNode NUMBER() { return GetToken(SICXEParser.NUMBER, 0); }
+		public F2_twoRegContext f2_twoReg() {
+			return GetRuleContext<F2_twoRegContext>(0);
+		}
+		public F2_regNumContext f2_regNum() {
+			return GetRuleContext<F2_regNumContext>(0);
+		}
+		public F2_numContext f2_num() {
+			return GetRuleContext<F2_numContext>(0);
+		}
 		public F2Context(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -574,36 +589,35 @@ public partial class SICXEParser : Parser {
 		F2Context _localctx = new F2Context(_ctx, State);
 		EnterRule(_localctx, 14, RULE_f2);
 		try {
-			State = 81;
+			State = 83;
 			_errHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(_input,7,_ctx) ) {
-			case 1:
+			switch (_input.La(1)) {
+			case OPCODE_F2_1REG:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 71; Match(OPCODE_F2);
-				State = 72; Match(REG);
+				State = 79; f2_oneReg();
 				}
 				break;
-
-			case 2:
+			case OPCODE_F2_2REG:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 73; Match(OPCODE_F2);
-				State = 74; Match(REG);
-				State = 75; Match(COMMA);
-				State = 76; Match(REG);
+				State = 80; f2_twoReg();
 				}
 				break;
-
-			case 3:
+			case OPCODE_F2_REGNUM:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 77; Match(OPCODE_F2);
-				State = 78; Match(REG);
-				State = 79; Match(COMMA);
-				State = 80; Match(NUMBER);
+				State = 81; f2_regNum();
 				}
 				break;
+			case OPCODE_F2_NUM:
+				EnterOuterAlt(_localctx, 4);
+				{
+				State = 82; f2_num();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -650,13 +664,13 @@ public partial class SICXEParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 83; Match(OPCODE_F3);
-			State = 85;
+			State = 85; Match(OPCODE_F3);
+			State = 87;
 			_errHandler.Sync(this);
 			_la = _input.La(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << HASH) | (1L << AT) | (1L << HEX_LITERAL) | (1L << CHAR_LITERAL) | (1L << ID) | (1L << NUMBER) | (1L << HEX))) != 0)) {
 				{
-				State = 84; f3Operands();
+				State = 86; f3Operands();
 				}
 			}
 
@@ -711,36 +725,226 @@ public partial class SICXEParser : Parser {
 		F3OperandsContext _localctx = new F3OperandsContext(_ctx, State);
 		EnterRule(_localctx, 18, RULE_f3Operands);
 		try {
-			State = 91;
+			State = 93;
 			_errHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(_input,9,_ctx) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 87; simpleOperand();
+				State = 89; simpleOperand();
 				}
 				break;
 
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 88; indexedOperand();
+				State = 90; indexedOperand();
 				}
 				break;
 
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 89; immediateOperand();
+				State = 91; immediateOperand();
 				}
 				break;
 
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 90; indirectOperand();
+				State = 92; indirectOperand();
 				}
 				break;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.ReportError(this, re);
+			_errHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class F2_oneRegContext : ParserRuleContext {
+		public ITerminalNode OPCODE_F2_1REG() { return GetToken(SICXEParser.OPCODE_F2_1REG, 0); }
+		public ITerminalNode REG() { return GetToken(SICXEParser.REG, 0); }
+		public F2_oneRegContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_f2_oneReg; } }
+		public override void EnterRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.EnterF2_oneReg(this);
+		}
+		public override void ExitRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.ExitF2_oneReg(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ISICXEVisitor<TResult> typedVisitor = visitor as ISICXEVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitF2_oneReg(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public F2_oneRegContext f2_oneReg() {
+		F2_oneRegContext _localctx = new F2_oneRegContext(_ctx, State);
+		EnterRule(_localctx, 20, RULE_f2_oneReg);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 95; Match(OPCODE_F2_1REG);
+			State = 96; Match(REG);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.ReportError(this, re);
+			_errHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class F2_twoRegContext : ParserRuleContext {
+		public ITerminalNode OPCODE_F2_2REG() { return GetToken(SICXEParser.OPCODE_F2_2REG, 0); }
+		public ITerminalNode[] REG() { return GetTokens(SICXEParser.REG); }
+		public ITerminalNode REG(int i) {
+			return GetToken(SICXEParser.REG, i);
+		}
+		public ITerminalNode COMMA() { return GetToken(SICXEParser.COMMA, 0); }
+		public F2_twoRegContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_f2_twoReg; } }
+		public override void EnterRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.EnterF2_twoReg(this);
+		}
+		public override void ExitRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.ExitF2_twoReg(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ISICXEVisitor<TResult> typedVisitor = visitor as ISICXEVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitF2_twoReg(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public F2_twoRegContext f2_twoReg() {
+		F2_twoRegContext _localctx = new F2_twoRegContext(_ctx, State);
+		EnterRule(_localctx, 22, RULE_f2_twoReg);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 98; Match(OPCODE_F2_2REG);
+			State = 99; Match(REG);
+			State = 100; Match(COMMA);
+			State = 101; Match(REG);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.ReportError(this, re);
+			_errHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class F2_regNumContext : ParserRuleContext {
+		public ITerminalNode OPCODE_F2_REGNUM() { return GetToken(SICXEParser.OPCODE_F2_REGNUM, 0); }
+		public ITerminalNode REG() { return GetToken(SICXEParser.REG, 0); }
+		public ITerminalNode COMMA() { return GetToken(SICXEParser.COMMA, 0); }
+		public ITerminalNode NUMBER() { return GetToken(SICXEParser.NUMBER, 0); }
+		public F2_regNumContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_f2_regNum; } }
+		public override void EnterRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.EnterF2_regNum(this);
+		}
+		public override void ExitRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.ExitF2_regNum(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ISICXEVisitor<TResult> typedVisitor = visitor as ISICXEVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitF2_regNum(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public F2_regNumContext f2_regNum() {
+		F2_regNumContext _localctx = new F2_regNumContext(_ctx, State);
+		EnterRule(_localctx, 24, RULE_f2_regNum);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 103; Match(OPCODE_F2_REGNUM);
+			State = 104; Match(REG);
+			State = 105; Match(COMMA);
+			State = 106; Match(NUMBER);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.ReportError(this, re);
+			_errHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class F2_numContext : ParserRuleContext {
+		public ITerminalNode OPCODE_F2_NUM() { return GetToken(SICXEParser.OPCODE_F2_NUM, 0); }
+		public ITerminalNode NUMBER() { return GetToken(SICXEParser.NUMBER, 0); }
+		public F2_numContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_f2_num; } }
+		public override void EnterRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.EnterF2_num(this);
+		}
+		public override void ExitRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.ExitF2_num(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ISICXEVisitor<TResult> typedVisitor = visitor as ISICXEVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitF2_num(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public F2_numContext f2_num() {
+		F2_numContext _localctx = new F2_numContext(_ctx, State);
+		EnterRule(_localctx, 26, RULE_f2_num);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 108; Match(OPCODE_F2_NUM);
+			State = 109; Match(NUMBER);
 			}
 		}
 		catch (RecognitionException re) {
@@ -781,11 +985,11 @@ public partial class SICXEParser : Parser {
 	[RuleVersion(0)]
 	public SimpleOperandContext simpleOperand() {
 		SimpleOperandContext _localctx = new SimpleOperandContext(_ctx, State);
-		EnterRule(_localctx, 20, RULE_simpleOperand);
+		EnterRule(_localctx, 28, RULE_simpleOperand);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 93; value();
+			State = 111; value();
 			}
 		}
 		catch (RecognitionException re) {
@@ -828,13 +1032,13 @@ public partial class SICXEParser : Parser {
 	[RuleVersion(0)]
 	public IndexedOperandContext indexedOperand() {
 		IndexedOperandContext _localctx = new IndexedOperandContext(_ctx, State);
-		EnterRule(_localctx, 22, RULE_indexedOperand);
+		EnterRule(_localctx, 30, RULE_indexedOperand);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 95; value();
-			State = 96; Match(COMMA);
-			State = 97; Match(REG);
+			State = 113; value();
+			State = 114; Match(COMMA);
+			State = 115; Match(REG);
 			}
 		}
 		catch (RecognitionException re) {
@@ -876,12 +1080,12 @@ public partial class SICXEParser : Parser {
 	[RuleVersion(0)]
 	public ImmediateOperandContext immediateOperand() {
 		ImmediateOperandContext _localctx = new ImmediateOperandContext(_ctx, State);
-		EnterRule(_localctx, 24, RULE_immediateOperand);
+		EnterRule(_localctx, 32, RULE_immediateOperand);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 99; Match(HASH);
-			State = 100; value();
+			State = 117; Match(HASH);
+			State = 118; value();
 			}
 		}
 		catch (RecognitionException re) {
@@ -923,12 +1127,12 @@ public partial class SICXEParser : Parser {
 	[RuleVersion(0)]
 	public IndirectOperandContext indirectOperand() {
 		IndirectOperandContext _localctx = new IndirectOperandContext(_ctx, State);
-		EnterRule(_localctx, 26, RULE_indirectOperand);
+		EnterRule(_localctx, 34, RULE_indirectOperand);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 102; Match(AT);
-			State = 103; value();
+			State = 120; Match(AT);
+			State = 121; value();
 			}
 		}
 		catch (RecognitionException re) {
@@ -970,18 +1174,18 @@ public partial class SICXEParser : Parser {
 	[RuleVersion(0)]
 	public DirectiveContext directive() {
 		DirectiveContext _localctx = new DirectiveContext(_ctx, State);
-		EnterRule(_localctx, 28, RULE_directive);
+		EnterRule(_localctx, 36, RULE_directive);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 105; Match(DIRECTIVE);
-			State = 107;
+			State = 123; Match(DIRECTIVE);
+			State = 125;
 			_errHandler.Sync(this);
 			_la = _input.La(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << HEX_LITERAL) | (1L << CHAR_LITERAL) | (1L << ID) | (1L << NUMBER) | (1L << HEX))) != 0)) {
 				{
-				State = 106; value();
+				State = 124; value();
 				}
 			}
 
@@ -1027,12 +1231,12 @@ public partial class SICXEParser : Parser {
 	[RuleVersion(0)]
 	public ValueContext value() {
 		ValueContext _localctx = new ValueContext(_ctx, State);
-		EnterRule(_localctx, 30, RULE_value);
+		EnterRule(_localctx, 38, RULE_value);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 109;
+			State = 127;
 			_la = _input.La(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << HEX_LITERAL) | (1L << CHAR_LITERAL) | (1L << ID) | (1L << NUMBER) | (1L << HEX))) != 0)) ) {
 			_errHandler.RecoverInline(this);
@@ -1058,43 +1262,49 @@ public partial class SICXEParser : Parser {
 	}
 
 	public static readonly string _serializedATN =
-		"\x3\xAF6F\x8320\x479D\xB75C\x4880\x1605\x191C\xAB37\x3\x13r\x4\x2\t\x2"+
-		"\x4\x3\t\x3\x4\x4\t\x4\x4\x5\t\x5\x4\x6\t\x6\x4\a\t\a\x4\b\t\b\x4\t\t"+
-		"\t\x4\n\t\n\x4\v\t\v\x4\f\t\f\x4\r\t\r\x4\xE\t\xE\x4\xF\t\xF\x4\x10\t"+
-		"\x10\x4\x11\t\x11\x3\x2\a\x2$\n\x2\f\x2\xE\x2\'\v\x2\x3\x2\x3\x2\x3\x3"+
-		"\x5\x3,\n\x3\x3\x3\x3\x3\x3\x3\x3\x4\x3\x4\x3\x4\x5\x4\x34\n\x4\x3\x5"+
-		"\x3\x5\x3\x6\x3\x6\x3\x6\x5\x6;\n\x6\x3\a\x3\a\x3\a\x3\b\x3\b\x5\b\x42"+
-		"\n\b\x3\b\x3\b\x5\b\x46\n\b\x5\bH\n\b\x3\t\x3\t\x3\t\x3\t\x3\t\x3\t\x3"+
-		"\t\x3\t\x3\t\x3\t\x5\tT\n\t\x3\n\x3\n\x5\nX\n\n\x3\v\x3\v\x3\v\x3\v\x5"+
-		"\v^\n\v\x3\f\x3\f\x3\r\x3\r\x3\r\x3\r\x3\xE\x3\xE\x3\xE\x3\xF\x3\xF\x3"+
-		"\xF\x3\x10\x3\x10\x5\x10n\n\x10\x3\x11\x3\x11\x3\x11\x2\x2\x2\x12\x2\x2"+
-		"\x4\x2\x6\x2\b\x2\n\x2\f\x2\xE\x2\x10\x2\x12\x2\x14\x2\x16\x2\x18\x2\x1A"+
-		"\x2\x1C\x2\x1E\x2 \x2\x2\x3\x3\x2\f\x10q\x2%\x3\x2\x2\x2\x4+\x3\x2\x2"+
-		"\x2\x6\x33\x3\x2\x2\x2\b\x35\x3\x2\x2\x2\n:\x3\x2\x2\x2\f<\x3\x2\x2\x2"+
-		"\xEG\x3\x2\x2\x2\x10S\x3\x2\x2\x2\x12U\x3\x2\x2\x2\x14]\x3\x2\x2\x2\x16"+
-		"_\x3\x2\x2\x2\x18\x61\x3\x2\x2\x2\x1A\x65\x3\x2\x2\x2\x1Ch\x3\x2\x2\x2"+
-		"\x1Ek\x3\x2\x2\x2 o\x3\x2\x2\x2\"$\x5\x4\x3\x2#\"\x3\x2\x2\x2$\'\x3\x2"+
-		"\x2\x2%#\x3\x2\x2\x2%&\x3\x2\x2\x2&(\x3\x2\x2\x2\'%\x3\x2\x2\x2()\a\x2"+
-		"\x2\x3)\x3\x3\x2\x2\x2*,\x5\b\x5\x2+*\x3\x2\x2\x2+,\x3\x2\x2\x2,-\x3\x2"+
-		"\x2\x2-.\x5\x6\x4\x2./\a\x12\x2\x2/\x5\x3\x2\x2\x2\x30\x34\x5\f\a\x2\x31"+
-		"\x34\x5\n\x6\x2\x32\x34\x5\x1E\x10\x2\x33\x30\x3\x2\x2\x2\x33\x31\x3\x2"+
-		"\x2\x2\x33\x32\x3\x2\x2\x2\x34\a\x3\x2\x2\x2\x35\x36\a\xE\x2\x2\x36\t"+
-		"\x3\x2\x2\x2\x37;\x5\xE\b\x2\x38;\x5\x10\t\x2\x39;\x5\x12\n\x2:\x37\x3"+
-		"\x2\x2\x2:\x38\x3\x2\x2\x2:\x39\x3\x2\x2\x2;\v\x3\x2\x2\x2<=\a\x3\x2\x2"+
-		"=>\x5\x12\n\x2>\r\x3\x2\x2\x2?\x41\a\a\x2\x2@\x42\x5\x14\v\x2\x41@\x3"+
-		"\x2\x2\x2\x41\x42\x3\x2\x2\x2\x42H\x3\x2\x2\x2\x43\x45\a\a\x2\x2\x44\x46"+
-		"\x5 \x11\x2\x45\x44\x3\x2\x2\x2\x45\x46\x3\x2\x2\x2\x46H\x3\x2\x2\x2G"+
-		"?\x3\x2\x2\x2G\x43\x3\x2\x2\x2H\xF\x3\x2\x2\x2IJ\a\b\x2\x2JT\a\v\x2\x2"+
-		"KL\a\b\x2\x2LM\a\v\x2\x2MN\a\x4\x2\x2NT\a\v\x2\x2OP\a\b\x2\x2PQ\a\v\x2"+
-		"\x2QR\a\x4\x2\x2RT\a\xF\x2\x2SI\x3\x2\x2\x2SK\x3\x2\x2\x2SO\x3\x2\x2\x2"+
-		"T\x11\x3\x2\x2\x2UW\a\t\x2\x2VX\x5\x14\v\x2WV\x3\x2\x2\x2WX\x3\x2\x2\x2"+
-		"X\x13\x3\x2\x2\x2Y^\x5\x16\f\x2Z^\x5\x18\r\x2[^\x5\x1A\xE\x2\\^\x5\x1C"+
-		"\xF\x2]Y\x3\x2\x2\x2]Z\x3\x2\x2\x2][\x3\x2\x2\x2]\\\x3\x2\x2\x2^\x15\x3"+
-		"\x2\x2\x2_`\x5 \x11\x2`\x17\x3\x2\x2\x2\x61\x62\x5 \x11\x2\x62\x63\a\x4"+
-		"\x2\x2\x63\x64\a\v\x2\x2\x64\x19\x3\x2\x2\x2\x65\x66\a\x5\x2\x2\x66g\x5"+
-		" \x11\x2g\x1B\x3\x2\x2\x2hi\a\x6\x2\x2ij\x5 \x11\x2j\x1D\x3\x2\x2\x2k"+
-		"m\a\n\x2\x2ln\x5 \x11\x2ml\x3\x2\x2\x2mn\x3\x2\x2\x2n\x1F\x3\x2\x2\x2"+
-		"op\t\x2\x2\x2p!\x3\x2\x2\x2\r%+\x33:\x41\x45GSW]m";
+		"\x3\xAF6F\x8320\x479D\xB75C\x4880\x1605\x191C\xAB37\x3\x16\x84\x4\x2\t"+
+		"\x2\x4\x3\t\x3\x4\x4\t\x4\x4\x5\t\x5\x4\x6\t\x6\x4\a\t\a\x4\b\t\b\x4\t"+
+		"\t\t\x4\n\t\n\x4\v\t\v\x4\f\t\f\x4\r\t\r\x4\xE\t\xE\x4\xF\t\xF\x4\x10"+
+		"\t\x10\x4\x11\t\x11\x4\x12\t\x12\x4\x13\t\x13\x4\x14\t\x14\x4\x15\t\x15"+
+		"\x3\x2\a\x2,\n\x2\f\x2\xE\x2/\v\x2\x3\x2\x3\x2\x3\x3\x5\x3\x34\n\x3\x3"+
+		"\x3\x3\x3\x3\x3\x3\x4\x3\x4\x3\x4\x5\x4<\n\x4\x3\x5\x3\x5\x3\x6\x3\x6"+
+		"\x3\x6\x5\x6\x43\n\x6\x3\a\x3\a\x3\a\x3\b\x3\b\x5\bJ\n\b\x3\b\x3\b\x5"+
+		"\bN\n\b\x5\bP\n\b\x3\t\x3\t\x3\t\x3\t\x5\tV\n\t\x3\n\x3\n\x5\nZ\n\n\x3"+
+		"\v\x3\v\x3\v\x3\v\x5\v`\n\v\x3\f\x3\f\x3\f\x3\r\x3\r\x3\r\x3\r\x3\r\x3"+
+		"\xE\x3\xE\x3\xE\x3\xE\x3\xE\x3\xF\x3\xF\x3\xF\x3\x10\x3\x10\x3\x11\x3"+
+		"\x11\x3\x11\x3\x11\x3\x12\x3\x12\x3\x12\x3\x13\x3\x13\x3\x13\x3\x14\x3"+
+		"\x14\x5\x14\x80\n\x14\x3\x15\x3\x15\x3\x15\x2\x2\x2\x16\x2\x2\x4\x2\x6"+
+		"\x2\b\x2\n\x2\f\x2\xE\x2\x10\x2\x12\x2\x14\x2\x16\x2\x18\x2\x1A\x2\x1C"+
+		"\x2\x1E\x2 \x2\"\x2$\x2&\x2(\x2\x2\x3\x3\x2\xF\x13\x80\x2-\x3\x2\x2\x2"+
+		"\x4\x33\x3\x2\x2\x2\x6;\x3\x2\x2\x2\b=\x3\x2\x2\x2\n\x42\x3\x2\x2\x2\f"+
+		"\x44\x3\x2\x2\x2\xEO\x3\x2\x2\x2\x10U\x3\x2\x2\x2\x12W\x3\x2\x2\x2\x14"+
+		"_\x3\x2\x2\x2\x16\x61\x3\x2\x2\x2\x18\x64\x3\x2\x2\x2\x1Ai\x3\x2\x2\x2"+
+		"\x1Cn\x3\x2\x2\x2\x1Eq\x3\x2\x2\x2 s\x3\x2\x2\x2\"w\x3\x2\x2\x2$z\x3\x2"+
+		"\x2\x2&}\x3\x2\x2\x2(\x81\x3\x2\x2\x2*,\x5\x4\x3\x2+*\x3\x2\x2\x2,/\x3"+
+		"\x2\x2\x2-+\x3\x2\x2\x2-.\x3\x2\x2\x2.\x30\x3\x2\x2\x2/-\x3\x2\x2\x2\x30"+
+		"\x31\a\x2\x2\x3\x31\x3\x3\x2\x2\x2\x32\x34\x5\b\x5\x2\x33\x32\x3\x2\x2"+
+		"\x2\x33\x34\x3\x2\x2\x2\x34\x35\x3\x2\x2\x2\x35\x36\x5\x6\x4\x2\x36\x37"+
+		"\a\x15\x2\x2\x37\x5\x3\x2\x2\x2\x38<\x5\f\a\x2\x39<\x5\n\x6\x2:<\x5&\x14"+
+		"\x2;\x38\x3\x2\x2\x2;\x39\x3\x2\x2\x2;:\x3\x2\x2\x2<\a\x3\x2\x2\x2=>\a"+
+		"\x11\x2\x2>\t\x3\x2\x2\x2?\x43\x5\xE\b\x2@\x43\x5\x10\t\x2\x41\x43\x5"+
+		"\x12\n\x2\x42?\x3\x2\x2\x2\x42@\x3\x2\x2\x2\x42\x41\x3\x2\x2\x2\x43\v"+
+		"\x3\x2\x2\x2\x44\x45\a\x3\x2\x2\x45\x46\x5\x12\n\x2\x46\r\x3\x2\x2\x2"+
+		"GI\a\a\x2\x2HJ\x5\x14\v\x2IH\x3\x2\x2\x2IJ\x3\x2\x2\x2JP\x3\x2\x2\x2K"+
+		"M\a\a\x2\x2LN\x5(\x15\x2ML\x3\x2\x2\x2MN\x3\x2\x2\x2NP\x3\x2\x2\x2OG\x3"+
+		"\x2\x2\x2OK\x3\x2\x2\x2P\xF\x3\x2\x2\x2QV\x5\x16\f\x2RV\x5\x18\r\x2SV"+
+		"\x5\x1A\xE\x2TV\x5\x1C\xF\x2UQ\x3\x2\x2\x2UR\x3\x2\x2\x2US\x3\x2\x2\x2"+
+		"UT\x3\x2\x2\x2V\x11\x3\x2\x2\x2WY\a\f\x2\x2XZ\x5\x14\v\x2YX\x3\x2\x2\x2"+
+		"YZ\x3\x2\x2\x2Z\x13\x3\x2\x2\x2[`\x5\x1E\x10\x2\\`\x5 \x11\x2]`\x5\"\x12"+
+		"\x2^`\x5$\x13\x2_[\x3\x2\x2\x2_\\\x3\x2\x2\x2_]\x3\x2\x2\x2_^\x3\x2\x2"+
+		"\x2`\x15\x3\x2\x2\x2\x61\x62\a\b\x2\x2\x62\x63\a\xE\x2\x2\x63\x17\x3\x2"+
+		"\x2\x2\x64\x65\a\t\x2\x2\x65\x66\a\xE\x2\x2\x66g\a\x4\x2\x2gh\a\xE\x2"+
+		"\x2h\x19\x3\x2\x2\x2ij\a\n\x2\x2jk\a\xE\x2\x2kl\a\x4\x2\x2lm\a\x12\x2"+
+		"\x2m\x1B\x3\x2\x2\x2no\a\v\x2\x2op\a\x12\x2\x2p\x1D\x3\x2\x2\x2qr\x5("+
+		"\x15\x2r\x1F\x3\x2\x2\x2st\x5(\x15\x2tu\a\x4\x2\x2uv\a\xE\x2\x2v!\x3\x2"+
+		"\x2\x2wx\a\x5\x2\x2xy\x5(\x15\x2y#\x3\x2\x2\x2z{\a\x6\x2\x2{|\x5(\x15"+
+		"\x2|%\x3\x2\x2\x2}\x7F\a\r\x2\x2~\x80\x5(\x15\x2\x7F~\x3\x2\x2\x2\x7F"+
+		"\x80\x3\x2\x2\x2\x80\'\x3\x2\x2\x2\x81\x82\t\x2\x2\x2\x82)\x3\x2\x2\x2"+
+		"\r-\x33;\x42IMOUY_\x7F";
 	public static readonly ATN _ATN =
 		new ATNDeserializer().Deserialize(_serializedATN.ToCharArray());
 }

@@ -670,6 +670,11 @@ namespace ProyectoSoftwareSistemas
                 // FORMATO 1
                 if (EsFormato1(linea.CodigoOp))
                 {
+                    if (!string.IsNullOrWhiteSpace(linea.Errores))
+                    {
+                        linea.CodigoObjeto = "---";
+                        continue;
+                    }
                     linea.CodigoObjeto = opcode;
                     continue;
                 }
@@ -677,6 +682,11 @@ namespace ProyectoSoftwareSistemas
                 // FORMATO 2
                 if (EsFormato2(linea.CodigoOp))
                 {
+                    if (!string.IsNullOrWhiteSpace(linea.Errores))
+                    {
+                        linea.CodigoObjeto = "---";
+                        continue;
+                    }
                     GenerarFormato2(linea, opcode);
                     continue;
                 }

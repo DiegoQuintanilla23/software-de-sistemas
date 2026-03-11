@@ -44,9 +44,10 @@ f1
     ;
 
 f2
-    : OPCODE_F2 REG
-    | OPCODE_F2 REG COMMA REG
-    | OPCODE_F2 REG COMMA NUMBER
+    : f2_oneReg
+    | f2_twoReg
+    | f2_regNum
+    | f2_num
     ;
 
 f3
@@ -60,6 +61,22 @@ f3Operands
     | indexedOperand
     | immediateOperand
     | indirectOperand
+    ;
+
+    f2_oneReg
+    : OPCODE_F2_1REG REG
+    ;
+
+f2_twoReg
+    : OPCODE_F2_2REG REG COMMA REG
+    ;
+
+f2_regNum
+    : OPCODE_F2_REGNUM REG COMMA NUMBER
+    ;
+
+f2_num
+    : OPCODE_F2_NUM NUMBER
     ;
 
 simpleOperand
@@ -107,9 +124,27 @@ OPCODE_F1
     : 'FIX' | 'FLOAT' | 'HIO' | 'NORM' | 'SIO' | 'TIO'
     ;
 
-OPCODE_F2
-    : 'ADDR' | 'CLEAR' | 'COMPR' | 'DIVR' | 'MULR'
-    | 'RMO' | 'SHIFTL' | 'SHIFTR' | 'SUBR' | 'SVC' | 'TIXR'
+OPCODE_F2_1REG
+    : 'CLEAR'
+    | 'TIXR'
+    ;
+
+OPCODE_F2_2REG
+    : 'ADDR'
+    | 'COMPR'
+    | 'DIVR'
+    | 'MULR'
+    | 'RMO'
+    | 'SUBR'
+    ;
+
+OPCODE_F2_REGNUM
+    : 'SHIFTL'
+    | 'SHIFTR'
+    ;
+
+OPCODE_F2_NUM
+    : 'SVC'
     ;
 
 OPCODE_F3

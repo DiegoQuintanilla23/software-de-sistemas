@@ -142,6 +142,50 @@ public interface ISICXEListener : IParseTreeListener {
 	void ExitF3Operands([NotNull] SICXEParser.F3OperandsContext context);
 
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="SICXEParser.f2_oneReg"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterF2_oneReg([NotNull] SICXEParser.F2_oneRegContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SICXEParser.f2_oneReg"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitF2_oneReg([NotNull] SICXEParser.F2_oneRegContext context);
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SICXEParser.f2_twoReg"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterF2_twoReg([NotNull] SICXEParser.F2_twoRegContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SICXEParser.f2_twoReg"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitF2_twoReg([NotNull] SICXEParser.F2_twoRegContext context);
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SICXEParser.f2_regNum"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterF2_regNum([NotNull] SICXEParser.F2_regNumContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SICXEParser.f2_regNum"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitF2_regNum([NotNull] SICXEParser.F2_regNumContext context);
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SICXEParser.f2_num"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterF2_num([NotNull] SICXEParser.F2_numContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SICXEParser.f2_num"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitF2_num([NotNull] SICXEParser.F2_numContext context);
+
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="SICXEParser.simpleOperand"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

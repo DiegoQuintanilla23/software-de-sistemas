@@ -103,6 +103,34 @@ public interface ISICXEVisitor<Result> : IParseTreeVisitor<Result> {
 	Result VisitF3Operands([NotNull] SICXEParser.F3OperandsContext context);
 
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="SICXEParser.f2_oneReg"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitF2_oneReg([NotNull] SICXEParser.F2_oneRegContext context);
+
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="SICXEParser.f2_twoReg"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitF2_twoReg([NotNull] SICXEParser.F2_twoRegContext context);
+
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="SICXEParser.f2_regNum"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitF2_regNum([NotNull] SICXEParser.F2_regNumContext context);
+
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="SICXEParser.f2_num"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitF2_num([NotNull] SICXEParser.F2_numContext context);
+
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="SICXEParser.simpleOperand"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

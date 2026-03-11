@@ -108,12 +108,77 @@ namespace ProyectoSoftwareSistemas
                     // FORMATO 2
                     else if (stmt.instruction()?.f2() != null)
                     {
-                        nueva.CodigoOp = stmt.instruction().f2().OPCODE_F2().GetText();
-                        nueva.Operador = stmt.instruction().f2().GetText()
-                                            .Replace(nueva.CodigoOp, "");
+                        var f2 = stmt.instruction().f2();
 
+                        nueva.CodigoOp = f2.Start.Text;
                         nueva.Formato = "2";
                         nueva.ModoDireccionamiento = "--";
+
+                        if (f2.f2_oneReg() != null)
+                        {
+                            var ctx = f2.f2_oneReg();
+
+                            if (ctx.REG() == null)
+                            {
+                                nueva.Errores = "Error: Falta registro";
+                                hayErrorSintactico = true;
+                            }
+                            else
+                            {
+                                nueva.Operador = ctx.REG().GetText();
+                            }
+                        }
+                        else if (f2.f2_twoReg() != null)
+                        {
+                            var ctx = f2.f2_twoReg();
+
+                            if (ctx.REG().Length < 2)
+                            {
+                                nueva.Operador = ctx.GetText().Replace(nueva.CodigoOp, "");
+                                nueva.Errores = "Error: Falta registro";
+                                hayErrorSintactico = true;
+                            }
+                            else if (ctx.REG().Length > 2)
+                            {
+                                nueva.Operador = ctx.GetText().Replace(nueva.CodigoOp, "");
+                                nueva.Errores = "Error: Demasiados registros";
+                                hayErrorSintactico = true;
+                            }
+                            else
+                            {
+                                var r1 = ctx.REG(0).GetText();
+                                var r2 = ctx.REG(1).GetText();
+
+                                nueva.Operador = r1 + "," + r2;
+                            }
+                        }
+                        else if (f2.f2_regNum() != null)
+                        {
+                            var r = f2.f2_regNum().REG().GetText();
+                            var n = f2.f2_regNum().NUMBER().GetText();
+
+                            nueva.Operador = r + "," + n;
+
+                            int valor = int.Parse(n);
+                            if (valor < 0 || valor > 15)
+                            {
+                                nueva.Errores = "Error: Número fuera de rango";
+                                hayErrorSintactico = true;
+                            }
+                        }
+                        else if (f2.f2_num() != null)
+                        {
+                            var n = f2.f2_num().NUMBER().GetText();
+                            nueva.Operador = n;
+
+                            int valor = int.Parse(n);
+                            if (valor < 0 || valor > 15)
+                            {
+                                nueva.Errores = "Error: Número fuera de rango";
+                                hayErrorSintactico = true;
+                            }
+                        }
+
                         if (!hayErrorSintactico)
                             contadorPrograma += 2;
                     }
