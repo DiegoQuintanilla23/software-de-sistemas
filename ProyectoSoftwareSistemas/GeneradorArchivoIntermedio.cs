@@ -127,6 +127,13 @@ namespace ProyectoSoftwareSistemas
                         nueva.ModoDireccionamiento = "-";
 
                         // Si existe value → es error
+                        if (f1.f3Operands() != null)
+                        {
+                            nueva.Operador = f1.f3Operands().GetText();
+                            nueva.Errores = "Error: Sintaxis";
+                            hayErrorSintactico = true;
+                            insertarEnTabSim = false;
+                        }
                         if (f1.value() != null)
                         {
                             nueva.Operador = f1.value().GetText();

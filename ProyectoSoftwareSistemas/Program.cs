@@ -125,7 +125,7 @@ namespace ProyectoSoftwareSistemas
                     generadorIntermedio.GenerarExcel(lineas, archivoObjeto, nombreArchivo);
 
                     Console.WriteLine("\n\n****** Proceso de Ensamblado Finalizado ******");
-                    Console.WriteLine("Archivo Excel generado con éxito (contiene Archivo Intermedio y Programa Objeto).");
+                    Console.WriteLine("Archivo Excel generado con éxito (Archivo Intermedio y Programa Objeto).");
 
                     generadorIntermedio.ImprimirTABSIM();
                 }

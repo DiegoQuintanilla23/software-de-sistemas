@@ -12,7 +12,6 @@ program
 
 line
     : label? statement NEWLINE
-    | NEWLINE
     ;
 
 statement
@@ -40,7 +39,8 @@ extendedInstr
 /* FORMATOS */
 
 f1
-    : OPCODE_F1 value?
+    : OPCODE_F1 f3Operands?
+    | OPCODE_F1 value?
     ;
 
 f2

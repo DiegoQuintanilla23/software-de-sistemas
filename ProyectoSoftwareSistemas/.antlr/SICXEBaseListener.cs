@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from c:/Users/Diego/Desktop/Fundamentos de software de sistemas/Practicas/02/QuintanillaEscalante_Practica03/SICXE.g by ANTLR 4.13.1
+// Generated from c:/Users/Diego/Desktop/Fundamentos de software de sistemas/Practicas/software-de-sistemas/ProyectoSoftwareSistemas/SICXE.g by ANTLR 4.13.1
 
 // Unreachable code detected
 #pragma warning disable 0162

@@ -12,6 +12,7 @@ namespace ProyectoSoftwareSistemas
         private Dictionary<string, string> _tabSim;
         private List<LineaIntermedia> _lineas;
         private Dictionary<string, int> _registros;
+        private int? _baseAddress = null;
 
         private Dictionary<string, string> _opcodes;
         public GeneradorCodigoObjeto(Dictionary<string, string> TABSIM, List<LineaIntermedia> lineas)
@@ -385,9 +386,37 @@ namespace ProyectoSoftwareSistemas
                     p = 1;
                     direccionSimbolo = disp & 0xFFF;
                 }
+                else if (_baseAddress.HasValue)
+                {
+                    int dispBase = direccionSimbolo - _baseAddress.Value;
+
+                    // Intentar BASE relative
+                    if (dispBase >= 0 && dispBase <= 4095)
+                    {
+                        b = 1;
+                        direccionSimbolo = dispBase & 0xFFF;
+                    }
+                    else
+                    {
+                        AgregarError(linea, "Error: Operando fuera de rango");
+
+                        b = 1;
+                        p = 1;
+
+                        int flagsError = (x << 3) | (b << 2) | (p << 1) | e;
+
+                        int codigoError =
+                            (opcode << 16) |
+                            (flagsError << 12) |
+                            0xFFF;
+
+                        linea.CodigoObjeto = codigoError.ToString("X6");
+                        return;
+                    }
+                }
                 else
                 {
-                    AgregarError(linea, "Error: Operando fuera de rango");
+                    AgregarError(linea, "Error: No es relativo a PC ni a BASE");
 
                     b = 1;
                     p = 1;
@@ -413,7 +442,6 @@ namespace ProyectoSoftwareSistemas
 
             linea.CodigoObjeto = codigoFinal.ToString("X6");
         }
-
         private void GenerarFormato4(LineaIntermedia linea)
         {
             string codop = linea.CodigoOp.Substring(1); // quitar '+'
@@ -494,6 +522,37 @@ namespace ProyectoSoftwareSistemas
                     return;
                 }
             }
+            else if (operando.EndsWith("H"))
+            {
+                try
+                {
+                    string hex = operando.Substring(0, operando.Length - 1);
+                    direccion = Convert.ToInt32(hex, 16);
+
+                    if (direccion < 0 || direccion > 0xFFFFF)
+                    {
+                        AgregarError(linea, "Operando fuera de rango");
+
+                        b = 1;
+                        p = 1;
+
+                        int flagsError = (x << 3) | (b << 2) | (p << 1) | e;
+
+                        int codigoError =
+                            (opcode << 24) |
+                            (flagsError << 20) |
+                            0xFFFFF;
+
+                        linea.CodigoObjeto = codigoError.ToString("X8");
+                        return;
+                    }
+                }
+                catch
+                {
+                    AgregarError(linea, "Número hexadecimal inválido");
+                    return;
+                }
+            }
             else
             {
                 if (!_tabSim.ContainsKey(operando))
@@ -550,6 +609,22 @@ namespace ProyectoSoftwareSistemas
         {
             foreach (var linea in _lineas)
             {
+                if (linea.CodigoOp == "BASE")
+                {
+                    if (_tabSim.ContainsKey(linea.Operador))
+                        _baseAddress = Convert.ToInt32(_tabSim[linea.Operador], 16);
+
+                    linea.CodigoObjeto = "----";
+                    continue;
+                }
+
+                if (linea.CodigoOp == "NOBASE")
+                {
+                    _baseAddress = null;
+                    linea.CodigoObjeto = "----";
+                    continue;
+                }
+
                 if (EsDirectivaSinCodigo(linea.CodigoOp))
                 {
                     linea.CodigoObjeto = "----";

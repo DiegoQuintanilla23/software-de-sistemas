@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from c:/Users/Diego/Desktop/Fundamentos de software de sistemas/Practicas/02/QuintanillaEscalante_Practica03/SICXE.g by ANTLR 4.13.1
+// Generated from c:/Users/Diego/Desktop/Fundamentos de software de sistemas/Practicas/software-de-sistemas/ProyectoSoftwareSistemas/SICXE.g by ANTLR 4.13.1
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -37,8 +37,8 @@ public partial class SICXEParser : Parser {
 	protected static PredictionContextCache sharedContextCache = new PredictionContextCache();
 	public const int
 		PLUS=1, COMMA=2, HASH=3, AT=4, OPCODE_F1=5, OPCODE_F2=6, OPCODE_F3=7, 
-		DIRECTIVE=8, REG=9, ID=10, NUMBER=11, HEX=12, CHAR_LITERAL=13, COMMENT=14, 
-		NEWLINE=15, WS=16;
+		DIRECTIVE=8, REG=9, HEX_LITERAL=10, CHAR_LITERAL=11, ID=12, NUMBER=13, 
+		HEX=14, COMMENT=15, NEWLINE=16, WS=17;
 	public const int
 		RULE_program = 0, RULE_line = 1, RULE_statement = 2, RULE_label = 3, RULE_instruction = 4, 
 		RULE_extendedInstr = 5, RULE_f1 = 6, RULE_f2 = 7, RULE_f3 = 8, RULE_f3Operands = 9, 
@@ -55,8 +55,8 @@ public partial class SICXEParser : Parser {
 	};
 	private static readonly string[] _SymbolicNames = {
 		null, "PLUS", "COMMA", "HASH", "AT", "OPCODE_F1", "OPCODE_F2", "OPCODE_F3", 
-		"DIRECTIVE", "REG", "ID", "NUMBER", "HEX", "CHAR_LITERAL", "COMMENT", 
-		"NEWLINE", "WS"
+		"DIRECTIVE", "REG", "HEX_LITERAL", "CHAR_LITERAL", "ID", "NUMBER", "HEX", 
+		"COMMENT", "NEWLINE", "WS"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -103,6 +103,16 @@ public partial class SICXEParser : Parser {
 		{
 		}
 		public override int RuleIndex { get { return RULE_program; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.EnterProgram(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.ExitProgram(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -116,7 +126,7 @@ public partial class SICXEParser : Parser {
 			State = 35;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 34274L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 4578L) != 0)) {
 				{
 				{
 				State = 32;
@@ -155,6 +165,16 @@ public partial class SICXEParser : Parser {
 		{
 		}
 		public override int RuleIndex { get { return RULE_line; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.EnterLine(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.ExitLine(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -163,42 +183,22 @@ public partial class SICXEParser : Parser {
 		EnterRule(_localctx, 2, RULE_line);
 		int _la;
 		try {
-			State = 47;
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 41;
 			ErrorHandler.Sync(this);
-			switch (TokenStream.LA(1)) {
-			case PLUS:
-			case OPCODE_F1:
-			case OPCODE_F2:
-			case OPCODE_F3:
-			case DIRECTIVE:
-			case ID:
-				EnterOuterAlt(_localctx, 1);
+			_la = TokenStream.LA(1);
+			if (_la==ID) {
 				{
-				State = 41;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				if (_la==ID) {
-					{
-					State = 40;
-					label();
-					}
+				State = 40;
+				label();
 				}
+			}
 
-				State = 43;
-				statement();
-				State = 44;
-				Match(NEWLINE);
-				}
-				break;
-			case NEWLINE:
-				EnterOuterAlt(_localctx, 2);
-				{
-				State = 46;
-				Match(NEWLINE);
-				}
-				break;
-			default:
-				throw new NoViableAltException(this);
+			State = 43;
+			statement();
+			State = 44;
+			Match(NEWLINE);
 			}
 		}
 		catch (RecognitionException re) {
@@ -227,6 +227,16 @@ public partial class SICXEParser : Parser {
 		{
 		}
 		public override int RuleIndex { get { return RULE_statement; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.EnterStatement(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.ExitStatement(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -234,13 +244,13 @@ public partial class SICXEParser : Parser {
 		StatementContext _localctx = new StatementContext(Context, State);
 		EnterRule(_localctx, 4, RULE_statement);
 		try {
-			State = 52;
+			State = 49;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case PLUS:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 49;
+				State = 46;
 				extendedInstr();
 				}
 				break;
@@ -249,14 +259,14 @@ public partial class SICXEParser : Parser {
 			case OPCODE_F3:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 50;
+				State = 47;
 				instruction();
 				}
 				break;
 			case DIRECTIVE:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 51;
+				State = 48;
 				directive();
 				}
 				break;
@@ -282,6 +292,16 @@ public partial class SICXEParser : Parser {
 		{
 		}
 		public override int RuleIndex { get { return RULE_label; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.EnterLabel(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.ExitLabel(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -291,7 +311,7 @@ public partial class SICXEParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 54;
+			State = 51;
 			Match(ID);
 			}
 		}
@@ -321,6 +341,16 @@ public partial class SICXEParser : Parser {
 		{
 		}
 		public override int RuleIndex { get { return RULE_instruction; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.EnterInstruction(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.ExitInstruction(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -328,27 +358,27 @@ public partial class SICXEParser : Parser {
 		InstructionContext _localctx = new InstructionContext(Context, State);
 		EnterRule(_localctx, 8, RULE_instruction);
 		try {
-			State = 59;
+			State = 56;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case OPCODE_F1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 56;
+				State = 53;
 				f1();
 				}
 				break;
 			case OPCODE_F2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 57;
+				State = 54;
 				f2();
 				}
 				break;
 			case OPCODE_F3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 58;
+				State = 55;
 				f3();
 				}
 				break;
@@ -377,6 +407,16 @@ public partial class SICXEParser : Parser {
 		{
 		}
 		public override int RuleIndex { get { return RULE_extendedInstr; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.EnterExtendedInstr(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.ExitExtendedInstr(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -386,9 +426,9 @@ public partial class SICXEParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 61;
+			State = 58;
 			Match(PLUS);
-			State = 62;
+			State = 59;
 			f3();
 			}
 		}
@@ -405,22 +445,72 @@ public partial class SICXEParser : Parser {
 
 	public partial class F1Context : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode OPCODE_F1() { return GetToken(SICXEParser.OPCODE_F1, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public F3OperandsContext f3Operands() {
+			return GetRuleContext<F3OperandsContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ValueContext value() {
+			return GetRuleContext<ValueContext>(0);
+		}
 		public F1Context(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
 		public override int RuleIndex { get { return RULE_f1; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.EnterF1(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.ExitF1(this);
+		}
 	}
 
 	[RuleVersion(0)]
 	public F1Context f1() {
 		F1Context _localctx = new F1Context(Context, State);
 		EnterRule(_localctx, 12, RULE_f1);
+		int _la;
 		try {
-			EnterOuterAlt(_localctx, 1);
-			{
-			State = 64;
-			Match(OPCODE_F1);
+			State = 69;
+			ErrorHandler.Sync(this);
+			switch ( Interpreter.AdaptivePredict(TokenStream,6,Context) ) {
+			case 1:
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 61;
+				Match(OPCODE_F1);
+				State = 63;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 31768L) != 0)) {
+					{
+					State = 62;
+					f3Operands();
+					}
+				}
+
+				}
+				break;
+			case 2:
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 65;
+				Match(OPCODE_F1);
+				State = 67;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 31744L) != 0)) {
+					{
+					State = 66;
+					value();
+					}
+				}
+
+				}
+				break;
 			}
 		}
 		catch (RecognitionException re) {
@@ -447,6 +537,16 @@ public partial class SICXEParser : Parser {
 		{
 		}
 		public override int RuleIndex { get { return RULE_f2; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.EnterF2(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.ExitF2(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -454,41 +554,41 @@ public partial class SICXEParser : Parser {
 		F2Context _localctx = new F2Context(Context, State);
 		EnterRule(_localctx, 14, RULE_f2);
 		try {
-			State = 76;
+			State = 81;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,5,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,7,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 66;
+				State = 71;
 				Match(OPCODE_F2);
-				State = 67;
+				State = 72;
 				Match(REG);
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 68;
+				State = 73;
 				Match(OPCODE_F2);
-				State = 69;
+				State = 74;
 				Match(REG);
-				State = 70;
+				State = 75;
 				Match(COMMA);
-				State = 71;
+				State = 76;
 				Match(REG);
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 72;
+				State = 77;
 				Match(OPCODE_F2);
-				State = 73;
+				State = 78;
 				Match(REG);
-				State = 74;
+				State = 79;
 				Match(COMMA);
-				State = 75;
+				State = 80;
 				Match(NUMBER);
 				}
 				break;
@@ -515,6 +615,16 @@ public partial class SICXEParser : Parser {
 		{
 		}
 		public override int RuleIndex { get { return RULE_f3; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.EnterF3(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.ExitF3(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -525,14 +635,14 @@ public partial class SICXEParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 78;
+			State = 83;
 			Match(OPCODE_F3);
-			State = 80;
+			State = 85;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 15384L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 31768L) != 0)) {
 				{
-				State = 79;
+				State = 84;
 				f3Operands();
 				}
 			}
@@ -568,6 +678,16 @@ public partial class SICXEParser : Parser {
 		{
 		}
 		public override int RuleIndex { get { return RULE_f3Operands; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.EnterF3Operands(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.ExitF3Operands(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -575,34 +695,34 @@ public partial class SICXEParser : Parser {
 		F3OperandsContext _localctx = new F3OperandsContext(Context, State);
 		EnterRule(_localctx, 18, RULE_f3Operands);
 		try {
-			State = 86;
+			State = 91;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,7,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,9,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 82;
+				State = 87;
 				simpleOperand();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 83;
+				State = 88;
 				indexedOperand();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 84;
+				State = 89;
 				immediateOperand();
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 85;
+				State = 90;
 				indirectOperand();
 				}
 				break;
@@ -628,6 +748,16 @@ public partial class SICXEParser : Parser {
 		{
 		}
 		public override int RuleIndex { get { return RULE_simpleOperand; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.EnterSimpleOperand(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.ExitSimpleOperand(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -637,7 +767,7 @@ public partial class SICXEParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 88;
+			State = 93;
 			value();
 			}
 		}
@@ -663,6 +793,16 @@ public partial class SICXEParser : Parser {
 		{
 		}
 		public override int RuleIndex { get { return RULE_indexedOperand; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.EnterIndexedOperand(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.ExitIndexedOperand(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -672,11 +812,11 @@ public partial class SICXEParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 90;
+			State = 95;
 			value();
-			State = 91;
+			State = 96;
 			Match(COMMA);
-			State = 92;
+			State = 97;
 			Match(REG);
 			}
 		}
@@ -701,6 +841,16 @@ public partial class SICXEParser : Parser {
 		{
 		}
 		public override int RuleIndex { get { return RULE_immediateOperand; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.EnterImmediateOperand(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.ExitImmediateOperand(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -710,9 +860,9 @@ public partial class SICXEParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 94;
+			State = 99;
 			Match(HASH);
-			State = 95;
+			State = 100;
 			value();
 			}
 		}
@@ -737,6 +887,16 @@ public partial class SICXEParser : Parser {
 		{
 		}
 		public override int RuleIndex { get { return RULE_indirectOperand; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.EnterIndirectOperand(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.ExitIndirectOperand(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -746,9 +906,9 @@ public partial class SICXEParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 97;
+			State = 102;
 			Match(AT);
-			State = 98;
+			State = 103;
 			value();
 			}
 		}
@@ -773,6 +933,16 @@ public partial class SICXEParser : Parser {
 		{
 		}
 		public override int RuleIndex { get { return RULE_directive; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.EnterDirective(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.ExitDirective(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -783,14 +953,14 @@ public partial class SICXEParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 100;
+			State = 105;
 			Match(DIRECTIVE);
-			State = 102;
+			State = 107;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 15360L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 31744L) != 0)) {
 				{
-				State = 101;
+				State = 106;
 				value();
 				}
 			}
@@ -813,11 +983,22 @@ public partial class SICXEParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NUMBER() { return GetToken(SICXEParser.NUMBER, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode HEX() { return GetToken(SICXEParser.HEX, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode CHAR_LITERAL() { return GetToken(SICXEParser.CHAR_LITERAL, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode HEX_LITERAL() { return GetToken(SICXEParser.HEX_LITERAL, 0); }
 		public ValueContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
 		public override int RuleIndex { get { return RULE_value; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.EnterValue(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ISICXEListener typedListener = listener as ISICXEListener;
+			if (typedListener != null) typedListener.ExitValue(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -828,9 +1009,9 @@ public partial class SICXEParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 104;
+			State = 109;
 			_la = TokenStream.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 15360L) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 31744L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
@@ -851,36 +1032,38 @@ public partial class SICXEParser : Parser {
 	}
 
 	private static int[] _serializedATN = {
-		4,1,16,107,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
+		4,1,17,112,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
 		7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,14,
 		2,15,7,15,1,0,5,0,34,8,0,10,0,12,0,37,9,0,1,0,1,0,1,1,3,1,42,8,1,1,1,1,
-		1,1,1,1,1,3,1,48,8,1,1,2,1,2,1,2,3,2,53,8,2,1,3,1,3,1,4,1,4,1,4,3,4,60,
-		8,4,1,5,1,5,1,5,1,6,1,6,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,3,7,77,
-		8,7,1,8,1,8,3,8,81,8,8,1,9,1,9,1,9,1,9,3,9,87,8,9,1,10,1,10,1,11,1,11,
-		1,11,1,11,1,12,1,12,1,12,1,13,1,13,1,13,1,14,1,14,3,14,103,8,14,1,15,1,
-		15,1,15,0,0,16,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,0,1,1,0,10,13,
-		104,0,35,1,0,0,0,2,47,1,0,0,0,4,52,1,0,0,0,6,54,1,0,0,0,8,59,1,0,0,0,10,
-		61,1,0,0,0,12,64,1,0,0,0,14,76,1,0,0,0,16,78,1,0,0,0,18,86,1,0,0,0,20,
-		88,1,0,0,0,22,90,1,0,0,0,24,94,1,0,0,0,26,97,1,0,0,0,28,100,1,0,0,0,30,
-		104,1,0,0,0,32,34,3,2,1,0,33,32,1,0,0,0,34,37,1,0,0,0,35,33,1,0,0,0,35,
-		36,1,0,0,0,36,38,1,0,0,0,37,35,1,0,0,0,38,39,5,0,0,1,39,1,1,0,0,0,40,42,
-		3,6,3,0,41,40,1,0,0,0,41,42,1,0,0,0,42,43,1,0,0,0,43,44,3,4,2,0,44,45,
-		5,15,0,0,45,48,1,0,0,0,46,48,5,15,0,0,47,41,1,0,0,0,47,46,1,0,0,0,48,3,
-		1,0,0,0,49,53,3,10,5,0,50,53,3,8,4,0,51,53,3,28,14,0,52,49,1,0,0,0,52,
-		50,1,0,0,0,52,51,1,0,0,0,53,5,1,0,0,0,54,55,5,10,0,0,55,7,1,0,0,0,56,60,
-		3,12,6,0,57,60,3,14,7,0,58,60,3,16,8,0,59,56,1,0,0,0,59,57,1,0,0,0,59,
-		58,1,0,0,0,60,9,1,0,0,0,61,62,5,1,0,0,62,63,3,16,8,0,63,11,1,0,0,0,64,
-		65,5,5,0,0,65,13,1,0,0,0,66,67,5,6,0,0,67,77,5,9,0,0,68,69,5,6,0,0,69,
-		70,5,9,0,0,70,71,5,2,0,0,71,77,5,9,0,0,72,73,5,6,0,0,73,74,5,9,0,0,74,
-		75,5,2,0,0,75,77,5,11,0,0,76,66,1,0,0,0,76,68,1,0,0,0,76,72,1,0,0,0,77,
-		15,1,0,0,0,78,80,5,7,0,0,79,81,3,18,9,0,80,79,1,0,0,0,80,81,1,0,0,0,81,
-		17,1,0,0,0,82,87,3,20,10,0,83,87,3,22,11,0,84,87,3,24,12,0,85,87,3,26,
-		13,0,86,82,1,0,0,0,86,83,1,0,0,0,86,84,1,0,0,0,86,85,1,0,0,0,87,19,1,0,
-		0,0,88,89,3,30,15,0,89,21,1,0,0,0,90,91,3,30,15,0,91,92,5,2,0,0,92,93,
-		5,9,0,0,93,23,1,0,0,0,94,95,5,3,0,0,95,96,3,30,15,0,96,25,1,0,0,0,97,98,
-		5,4,0,0,98,99,3,30,15,0,99,27,1,0,0,0,100,102,5,8,0,0,101,103,3,30,15,
-		0,102,101,1,0,0,0,102,103,1,0,0,0,103,29,1,0,0,0,104,105,7,0,0,0,105,31,
-		1,0,0,0,9,35,41,47,52,59,76,80,86,102
+		1,1,1,1,2,1,2,1,2,3,2,50,8,2,1,3,1,3,1,4,1,4,1,4,3,4,57,8,4,1,5,1,5,1,
+		5,1,6,1,6,3,6,64,8,6,1,6,1,6,3,6,68,8,6,3,6,70,8,6,1,7,1,7,1,7,1,7,1,7,
+		1,7,1,7,1,7,1,7,1,7,3,7,82,8,7,1,8,1,8,3,8,86,8,8,1,9,1,9,1,9,1,9,3,9,
+		92,8,9,1,10,1,10,1,11,1,11,1,11,1,11,1,12,1,12,1,12,1,13,1,13,1,13,1,14,
+		1,14,3,14,108,8,14,1,15,1,15,1,15,0,0,16,0,2,4,6,8,10,12,14,16,18,20,22,
+		24,26,28,30,0,1,1,0,10,14,111,0,35,1,0,0,0,2,41,1,0,0,0,4,49,1,0,0,0,6,
+		51,1,0,0,0,8,56,1,0,0,0,10,58,1,0,0,0,12,69,1,0,0,0,14,81,1,0,0,0,16,83,
+		1,0,0,0,18,91,1,0,0,0,20,93,1,0,0,0,22,95,1,0,0,0,24,99,1,0,0,0,26,102,
+		1,0,0,0,28,105,1,0,0,0,30,109,1,0,0,0,32,34,3,2,1,0,33,32,1,0,0,0,34,37,
+		1,0,0,0,35,33,1,0,0,0,35,36,1,0,0,0,36,38,1,0,0,0,37,35,1,0,0,0,38,39,
+		5,0,0,1,39,1,1,0,0,0,40,42,3,6,3,0,41,40,1,0,0,0,41,42,1,0,0,0,42,43,1,
+		0,0,0,43,44,3,4,2,0,44,45,5,16,0,0,45,3,1,0,0,0,46,50,3,10,5,0,47,50,3,
+		8,4,0,48,50,3,28,14,0,49,46,1,0,0,0,49,47,1,0,0,0,49,48,1,0,0,0,50,5,1,
+		0,0,0,51,52,5,12,0,0,52,7,1,0,0,0,53,57,3,12,6,0,54,57,3,14,7,0,55,57,
+		3,16,8,0,56,53,1,0,0,0,56,54,1,0,0,0,56,55,1,0,0,0,57,9,1,0,0,0,58,59,
+		5,1,0,0,59,60,3,16,8,0,60,11,1,0,0,0,61,63,5,5,0,0,62,64,3,18,9,0,63,62,
+		1,0,0,0,63,64,1,0,0,0,64,70,1,0,0,0,65,67,5,5,0,0,66,68,3,30,15,0,67,66,
+		1,0,0,0,67,68,1,0,0,0,68,70,1,0,0,0,69,61,1,0,0,0,69,65,1,0,0,0,70,13,
+		1,0,0,0,71,72,5,6,0,0,72,82,5,9,0,0,73,74,5,6,0,0,74,75,5,9,0,0,75,76,
+		5,2,0,0,76,82,5,9,0,0,77,78,5,6,0,0,78,79,5,9,0,0,79,80,5,2,0,0,80,82,
+		5,13,0,0,81,71,1,0,0,0,81,73,1,0,0,0,81,77,1,0,0,0,82,15,1,0,0,0,83,85,
+		5,7,0,0,84,86,3,18,9,0,85,84,1,0,0,0,85,86,1,0,0,0,86,17,1,0,0,0,87,92,
+		3,20,10,0,88,92,3,22,11,0,89,92,3,24,12,0,90,92,3,26,13,0,91,87,1,0,0,
+		0,91,88,1,0,0,0,91,89,1,0,0,0,91,90,1,0,0,0,92,19,1,0,0,0,93,94,3,30,15,
+		0,94,21,1,0,0,0,95,96,3,30,15,0,96,97,5,2,0,0,97,98,5,9,0,0,98,23,1,0,
+		0,0,99,100,5,3,0,0,100,101,3,30,15,0,101,25,1,0,0,0,102,103,5,4,0,0,103,
+		104,3,30,15,0,104,27,1,0,0,0,105,107,5,8,0,0,106,108,3,30,15,0,107,106,
+		1,0,0,0,107,108,1,0,0,0,108,29,1,0,0,0,109,110,7,0,0,0,110,31,1,0,0,0,
+		11,35,41,49,56,63,67,69,81,85,91,107
 	};
 
 	public static readonly ATN _ATN =
