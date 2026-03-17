@@ -11,6 +11,49 @@ namespace ProyectoSoftwareSistemas
         private List<LineaIntermedia> _lineas;
         private Dictionary<string, string> _tablaSimbolos;
 
+        private bool EsFormato1(string codop)
+        {
+            return new[] { "FIX", "FLOAT", "HIO", "NORM", "SIO", "TIO" }
+                .Contains(codop);
+        }
+
+        private bool EsFormato2(string codop)
+        {
+            return new[]
+            {
+                "ADDR", "CLEAR", "COMPR", "DIVR",
+                "MULR", "RMO", "SHIFTL", "SHIFTR",
+                "SUBR", "SVC", "TIXR"
+            }.Contains(codop);
+        }
+
+        private bool EsFormato3(string codop)
+        {
+            return new[]
+            {
+                "ADD", "ADDF", "AND", "COMP", "COMPF",
+                "DIV", "DIVF", "J", "JEQ", "JGT", "JLT", "JSUB",
+                "LDA", "LDB", "LDCH", "LDF", "LDL", "LDS",
+                "LDT", "LDX", "LPS",
+                "MUL", "MULF", "OR",
+                "RD", "RSUB",
+                "STA", "STB", "STCH", "STF", "STI", "STL",
+                "STS", "STSW", "STT", "STX",
+                "SUB", "SUBF",
+                "TD", "TIX", "WD"
+            }.Contains(codop);
+        }
+
+        private bool EsInstruccion(string codop)
+        {
+            if (string.IsNullOrWhiteSpace(codop))
+                return false;
+
+            codop = codop.TrimStart('+');
+
+            return EsFormato1(codop) || EsFormato2(codop) || EsFormato3(codop);
+        }
+
         public GeneradorProgramaObjeto(List<LineaIntermedia> lineas, Dictionary<string, string> tablaSimbolos)
         {
             _lineas = lineas;
@@ -118,6 +161,19 @@ namespace ProyectoSoftwareSistemas
             {
                 if(_tablaSimbolos.ContainsKey(endLine.Operador))
                     direccionEjecucion = Convert.ToInt32(_tablaSimbolos[endLine.Operador], 16);
+            }
+            else
+            {
+                // Buscar la primera instrucción válida con código objeto
+                var primeraInstruccion = _lineas.FirstOrDefault(l =>
+                    !string.IsNullOrWhiteSpace(l.CodigoObjeto) &&
+                    !l.CodigoObjeto.StartsWith("-") &&
+                    !l.CodigoObjeto.StartsWith("***") &&
+                    EsInstruccion(l.CodigoOp)
+                );
+
+                if (primeraInstruccion != null)
+                    direccionEjecucion = Convert.ToInt32(primeraInstruccion.ContadorPrograma, 16);
             }
 
             string regE = $"E{direccionEjecucion:X6}";
