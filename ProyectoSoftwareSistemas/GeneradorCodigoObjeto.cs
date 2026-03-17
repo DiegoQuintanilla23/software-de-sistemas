@@ -104,6 +104,12 @@ namespace ProyectoSoftwareSistemas
                 { "WD", "DC" }
             };
         }
+
+        private bool EsSalto(string opcode)
+        {
+            return opcode == "J" || opcode == "JEQ" || opcode == "JGT"
+                || opcode == "JLT" || opcode == "JSUB";
+        }
         private bool EsFormato1(string codop)
         {
             return new[] { "FIX", "FLOAT", "HIO", "NORM", "SIO", "TIO" }
@@ -452,6 +458,7 @@ namespace ProyectoSoftwareSistemas
             opcode = opcode & 0xFC;
 
             string operando = linea.Operador?.Trim() ?? "";
+            operando = operando.Replace(" ", "");
 
             int n = 1, i = 1, x = 0, b = 0, p = 0, e = 1; // e SIEMPRE 1
 
@@ -493,6 +500,25 @@ namespace ProyectoSoftwareSistemas
             {
                 x = 1;
                 operando = operando.Replace(",X", "");
+            }
+
+            if (EsSalto(codop) && x == 1)
+            {
+                AgregarError(linea, "Error: no existe combinación MD");
+
+                opcode = (opcode & 0xFC) | (n << 1) | i;
+                b = 1;
+                p = 1;
+
+                int flagsError = (x << 3) | (b << 2) | (p << 1) | e;
+
+                int codigoError =
+                    (opcode << 24) |
+                    (flagsError << 20) |
+                    0xFFFFF;
+
+                linea.CodigoObjeto = codigoError.ToString("X8");
+                return;
             }
 
             opcode = opcode | (n << 1) | i;

@@ -241,6 +241,39 @@ public interface ISICXEListener : IParseTreeListener {
 	void ExitDirective([NotNull] SICXEParser.DirectiveContext context);
 
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="SICXEParser.expr"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterExpr([NotNull] SICXEParser.ExprContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SICXEParser.expr"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitExpr([NotNull] SICXEParser.ExprContext context);
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SICXEParser.term"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterTerm([NotNull] SICXEParser.TermContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SICXEParser.term"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitTerm([NotNull] SICXEParser.TermContext context);
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SICXEParser.factor"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterFactor([NotNull] SICXEParser.FactorContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SICXEParser.factor"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitFactor([NotNull] SICXEParser.FactorContext context);
+
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="SICXEParser.value"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

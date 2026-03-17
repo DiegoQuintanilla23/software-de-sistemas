@@ -98,10 +98,26 @@ indirectOperand
 /* DIRECTIVAS */
 
 directive
-    : DIRECTIVE value?
+    : DIRECTIVE expr?
     ;
 
 /* VALORES */
+
+expr
+    : expr PLUS term
+    | expr MINUS term
+    | term
+    ;
+
+term
+    : term MUL factor
+    | factor
+    ;
+
+factor
+    : value
+    | LPAREN expr RPAREN
+    ;
 
 value
     : ID
@@ -117,6 +133,10 @@ PLUS  : '+' ;
 COMMA : ',' ;
 HASH  : '#' ;
 AT    : '@' ;
+MINUS  : '-' ;
+MUL    : '*' ;
+LPAREN : '(' ;
+RPAREN : ')' ;
 
 /* OPCODES POR FORMATO */
 
@@ -164,7 +184,7 @@ OPCODE_F3
 
 DIRECTIVE
     : 'START' | 'END' | 'WORD' | 'RESW' | 'RESB'
-    | 'BYTE' | 'BASE' | 'NOBASE' | 'EQU'
+    | 'BYTE' | 'BASE' | 'NOBASE' | 'EQU' | 'ORG'
     ;
 
 /* REGISTROS */

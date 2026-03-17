@@ -166,6 +166,27 @@ public interface ISICXEVisitor<Result> : IParseTreeVisitor<Result> {
 	Result VisitDirective([NotNull] SICXEParser.DirectiveContext context);
 
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="SICXEParser.expr"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitExpr([NotNull] SICXEParser.ExprContext context);
+
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="SICXEParser.term"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitTerm([NotNull] SICXEParser.TermContext context);
+
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="SICXEParser.factor"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFactor([NotNull] SICXEParser.FactorContext context);
+
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="SICXEParser.value"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

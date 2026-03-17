@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,6 +32,12 @@ namespace ProyectoSoftwareSistemas
         public GeneradorArchivoIntermedio(SICXEParser.ProgramContext root)
         {
             _root = root;
+        }
+
+        private bool EsSalto(string opcode)
+        {
+            return opcode == "J" || opcode == "JEQ" || opcode == "JGT"
+                || opcode == "JLT" || opcode == "JSUB";
         }
 
         public List<LineaIntermedia> GenerarLineas()
@@ -80,15 +87,28 @@ namespace ProyectoSoftwareSistemas
                     // EXTENDIDA (+)
                     if (stmt.extendedInstr() != null)
                     {
-                        nueva.CodigoOp = "+" + stmt.extendedInstr().f3().OPCODE_F3().GetText();
+                        string opcode = stmt.extendedInstr().f3().OPCODE_F3().GetText();
+
+                        nueva.CodigoOp = "+" + opcode;
                         nueva.Formato = "4";
+
                         if (!hayErrorSintactico)
                             contadorPrograma += 4;
 
                         if (stmt.extendedInstr().f3().f3Operands() != null)
                         {
-                            nueva.Operador = stmt.extendedInstr().f3().f3Operands().GetText();
-                            ProcesarModoDireccionamiento(nueva, stmt.extendedInstr().f3().f3Operands());
+                            var ops = stmt.extendedInstr().f3().f3Operands();
+
+                            nueva.Operador = ops.GetText();
+                            ProcesarModoDireccionamiento(nueva, ops);
+
+                            // VALIDACIÓN AQUÍ
+                            // bool esIndexado = ops.indexedOperand() != null;
+
+                            // if (EsSalto(opcode) && esIndexado)
+                            // {
+                            // nueva.Errores = "Error: no existe combinación MD";
+                            // }
                         }
                     }
                     // FORMATO 3 normal

@@ -283,6 +283,45 @@ public partial class SICXEBaseListener : ISICXEListener {
 	public virtual void ExitDirective([NotNull] SICXEParser.DirectiveContext context) { }
 
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="SICXEParser.expr"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterExpr([NotNull] SICXEParser.ExprContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SICXEParser.expr"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitExpr([NotNull] SICXEParser.ExprContext context) { }
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SICXEParser.term"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterTerm([NotNull] SICXEParser.TermContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SICXEParser.term"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitTerm([NotNull] SICXEParser.TermContext context) { }
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SICXEParser.factor"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFactor([NotNull] SICXEParser.FactorContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SICXEParser.factor"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFactor([NotNull] SICXEParser.FactorContext context) { }
+
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="SICXEParser.value"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
