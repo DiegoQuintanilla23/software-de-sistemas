@@ -27,7 +27,7 @@ namespace ProyectoSoftwareSistemas
     public class GeneradorArchivoIntermedio
     {
         private SICXEParser.ProgramContext _root;
-        private Dictionary<string, string> TABSIM = new Dictionary<string, string>();
+        private Dictionary<string, Simbolo> TABSIM = new Dictionary<string, Simbolo>();
 
         public GeneradorArchivoIntermedio(SICXEParser.ProgramContext root)
         {
@@ -44,6 +44,8 @@ namespace ProyectoSoftwareSistemas
         {
             var lista = new List<LineaIntermedia>();
             int contadorPrograma = 0;
+            Stack<int> pilaORG = new Stack<int>();
+            var evaluador = new EvaluadorExpresiones(TABSIM);
 
             foreach (var linea in _root.line())
             {
@@ -211,7 +213,7 @@ namespace ProyectoSoftwareSistemas
                         nueva.Formato = "1";
                         nueva.ModoDireccionamiento = "-";
 
-                        // Si existe value → es error
+                        // Si existe value - es error
                         if (f1.f3Operands() != null)
                         {
                             nueva.Operador = f1.f3Operands().GetText();
@@ -326,6 +328,99 @@ namespace ProyectoSoftwareSistemas
                                 insertarEnTabSim = false;
                             }
                         }
+                        else if (nueva.CodigoOp == "EQU")
+                        {
+                            if (string.IsNullOrEmpty(nueva.Etiqueta))
+                            {
+                                nueva.Errores = "Error: EQU requiere etiqueta";
+                                hayErrorSemantico = true;
+                                insertarEnTabSim = false;
+                            }
+                            else
+                            {
+                                var res = evaluador.Evaluar(nueva, contadorPrograma);
+
+                                if (res.Error)
+                                {
+                                    // Acumular error
+                                    if (string.IsNullOrEmpty(nueva.Errores))
+                                        nueva.Errores = res.MensajeError;
+                                    else
+                                        nueva.Errores += " | " + res.MensajeError;
+
+                                    hayErrorSemantico = true;
+
+                                    // IMPORTANTE: insertar con FFFF tipo A
+                                    TABSIM[nueva.Etiqueta] = new Simbolo
+                                    {
+                                        Nombre = nueva.Etiqueta,
+                                        Direccion = 0xFFFF,
+                                        Tipo = "A",
+                                        EsRelativo = false,
+                                        Bloque = "DEFAULT"
+                                    };
+                                }
+                                else
+                                {
+                                    TABSIM[nueva.Etiqueta] = new Simbolo
+                                    {
+                                        Nombre = nueva.Etiqueta,
+                                        Direccion = res.Valor,
+                                        Tipo = res.Tipo,
+                                        EsRelativo = res.EsRelativo,
+                                        Bloque = "DEFAULT"
+                                    };
+                                }
+
+                                insertarEnTabSim = false;
+                            }
+                        }
+                        else if (nueva.CodigoOp == "ORG")
+                        {
+                            // ORG sin operando - regresar
+                            if (string.IsNullOrWhiteSpace(nueva.Operador))
+                            {
+                                if (pilaORG.Count > 0)
+                                {
+                                    contadorPrograma = pilaORG.Pop();
+                                    nueva.ContadorPrograma = contadorPrograma.ToString("X4");
+                                }
+                                else
+                                {
+                                    if (string.IsNullOrEmpty(nueva.Errores))
+                                        nueva.Errores = "Error: ORG sin valor previo";
+                                    else
+                                        nueva.Errores += " | Error: ORG sin valor previo";
+
+                                    hayErrorSemantico = true;
+                                }
+                            }
+                            else
+                            {
+                                var res = evaluador.Evaluar(nueva, contadorPrograma);
+
+                                if (res.Error)
+                                {
+                                    if (string.IsNullOrEmpty(nueva.Errores))
+                                        nueva.Errores = res.MensajeError;
+                                    else
+                                        nueva.Errores += " | " + res.MensajeError;
+
+                                    hayErrorSemantico = true;
+                                }
+                                else
+                                {
+                                    // Guardar PC actual
+                                    pilaORG.Push(contadorPrograma);
+
+                                    contadorPrograma = res.Valor;
+                                    nueva.ContadorPrograma = contadorPrograma.ToString("X4");
+                                }
+                            }
+
+                            insertarEnTabSim = false;
+                        }
+
                     }
                     else
                     {
@@ -337,7 +432,14 @@ namespace ProyectoSoftwareSistemas
 
                 if (!hayErrorSemantico && insertarEnTabSim)
                 {
-                    TABSIM[nueva.Etiqueta] = nueva.ContadorPrograma;
+                    TABSIM[nueva.Etiqueta] = new Simbolo
+                    {
+                        Nombre = nueva.Etiqueta,
+                        Direccion = Convert.ToInt32(nueva.ContadorPrograma, 16),
+                        Tipo = "R",
+                        EsRelativo = true,
+                        Bloque = "DEFAULT"
+                    };
                 }
 
                 lista.Add(nueva);
@@ -352,7 +454,7 @@ namespace ProyectoSoftwareSistemas
 
             texto = texto.Trim().ToUpper();
 
-            // Si termina en H → hexadecimal
+            // Si termina en H - hexadecimal
             if (texto.EndsWith("H"))
             {
                 string hex = texto.Substring(0, texto.Length - 1);
@@ -363,7 +465,7 @@ namespace ProyectoSoftwareSistemas
                                     out valor);
             }
 
-            // Si empieza con 0x → hexadecimal
+            // Si empieza con 0x - hexadecimal
             if (texto.StartsWith("0X"))
             {
                 return int.TryParse(texto.Substring(2),
@@ -372,7 +474,7 @@ namespace ProyectoSoftwareSistemas
                                     out valor);
             }
 
-            // Si no → decimal normal
+            // Si no - decimal normal
             return int.TryParse(texto, out valor);
         }
 
@@ -461,18 +563,26 @@ namespace ProyectoSoftwareSistemas
                 return;
             }
 
-            Console.WriteLine("{0,-20} {1,-10}", "Símbolo", "Dirección");
-            Console.WriteLine(new string('-', 30));
+            // Encabezados
+            Console.WriteLine("{0,-15} {1,-10} {2,-10} {3,-10} {4,-10}",
+                "Símbolo", "Dirección", "Tipo", "Relativo", "Bloque");
 
-            foreach (var simbolo in TABSIM)
+            Console.WriteLine(new string('-', 60));
+
+            foreach (var simbolo in TABSIM.Values)
             {
-                Console.WriteLine("{0,-20} {1,-10}", simbolo.Key, simbolo.Value);
+                Console.WriteLine("{0,-15} {1,-10:X4} {2,-10} {3,-10} {4,-10}",
+                    simbolo.Nombre,
+                    simbolo.Direccion,
+                    simbolo.Tipo,
+                    simbolo.EsRelativo ? "Sí" : "No",
+                    simbolo.Bloque);
             }
 
             Console.WriteLine("\n========================================\n");
         }
 
-        public Dictionary<string, string> GetTabSim()
+        public Dictionary<string, Simbolo> GetTabSim()
         {
             return this.TABSIM;
         }

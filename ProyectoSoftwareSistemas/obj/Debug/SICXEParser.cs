@@ -31,10 +31,10 @@ using DFA = Antlr4.Runtime.Dfa.DFA;
 [System.CLSCompliant(false)]
 public partial class SICXEParser : Parser {
 	public const int
-		PLUS=1, COMMA=2, HASH=3, AT=4, MINUS=5, MUL=6, LPAREN=7, RPAREN=8, OPCODE_F1=9, 
-		OPCODE_F2_1REG=10, OPCODE_F2_2REG=11, OPCODE_F2_REGNUM=12, OPCODE_F2_NUM=13, 
-		OPCODE_F3=14, DIRECTIVE=15, REG=16, HEX_LITERAL=17, CHAR_LITERAL=18, ID=19, 
-		NUMBER=20, HEX=21, COMMENT=22, NEWLINE=23, WS=24;
+		PLUS=1, COMMA=2, HASH=3, AT=4, MINUS=5, MUL=6, DIV=7, LPAREN=8, RPAREN=9, 
+		OPCODE_F1=10, OPCODE_F2_1REG=11, OPCODE_F2_2REG=12, OPCODE_F2_REGNUM=13, 
+		OPCODE_F2_NUM=14, OPCODE_F3=15, DIRECTIVE=16, REG=17, HEX_LITERAL=18, 
+		CHAR_LITERAL=19, ID=20, NUMBER=21, HEX=22, COMMENT=23, NEWLINE=24, WS=25;
 	public const int
 		RULE_program = 0, RULE_line = 1, RULE_statement = 2, RULE_label = 3, RULE_instruction = 4, 
 		RULE_extendedInstr = 5, RULE_f1 = 6, RULE_f2 = 7, RULE_f3 = 8, RULE_f3Operands = 9, 
@@ -50,14 +50,14 @@ public partial class SICXEParser : Parser {
 	};
 
 	private static readonly string[] _LiteralNames = {
-		null, "'+'", "','", "'#'", "'@'", "'-'", "'*'", "'('", "')'", null, null, 
-		null, null, "'SVC'"
+		null, "'+'", "','", "'#'", "'@'", "'-'", "'*'", "'/'", "'('", "')'", null, 
+		null, null, null, "'SVC'"
 	};
 	private static readonly string[] _SymbolicNames = {
-		null, "PLUS", "COMMA", "HASH", "AT", "MINUS", "MUL", "LPAREN", "RPAREN", 
-		"OPCODE_F1", "OPCODE_F2_1REG", "OPCODE_F2_2REG", "OPCODE_F2_REGNUM", "OPCODE_F2_NUM", 
-		"OPCODE_F3", "DIRECTIVE", "REG", "HEX_LITERAL", "CHAR_LITERAL", "ID", 
-		"NUMBER", "HEX", "COMMENT", "NEWLINE", "WS"
+		null, "PLUS", "COMMA", "HASH", "AT", "MINUS", "MUL", "DIV", "LPAREN", 
+		"RPAREN", "OPCODE_F1", "OPCODE_F2_1REG", "OPCODE_F2_2REG", "OPCODE_F2_REGNUM", 
+		"OPCODE_F2_NUM", "OPCODE_F3", "DIRECTIVE", "REG", "HEX_LITERAL", "CHAR_LITERAL", 
+		"ID", "NUMBER", "HEX", "COMMENT", "NEWLINE", "WS"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -516,7 +516,7 @@ public partial class SICXEParser : Parser {
 				State = 77;
 				_errHandler.Sync(this);
 				_la = _input.La(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << HASH) | (1L << AT) | (1L << HEX_LITERAL) | (1L << CHAR_LITERAL) | (1L << ID) | (1L << NUMBER) | (1L << HEX))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << HASH) | (1L << AT) | (1L << MINUS) | (1L << MUL) | (1L << LPAREN) | (1L << HEX_LITERAL) | (1L << CHAR_LITERAL) | (1L << ID) | (1L << NUMBER) | (1L << HEX))) != 0)) {
 					{
 					State = 76; f3Operands();
 					}
@@ -532,7 +532,7 @@ public partial class SICXEParser : Parser {
 				State = 81;
 				_errHandler.Sync(this);
 				_la = _input.La(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << HEX_LITERAL) | (1L << CHAR_LITERAL) | (1L << ID) | (1L << NUMBER) | (1L << HEX))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MUL) | (1L << HEX_LITERAL) | (1L << CHAR_LITERAL) | (1L << ID) | (1L << NUMBER) | (1L << HEX))) != 0)) {
 					{
 					State = 80; value();
 					}
@@ -670,7 +670,7 @@ public partial class SICXEParser : Parser {
 			State = 93;
 			_errHandler.Sync(this);
 			_la = _input.La(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << HASH) | (1L << AT) | (1L << HEX_LITERAL) | (1L << CHAR_LITERAL) | (1L << ID) | (1L << NUMBER) | (1L << HEX))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << HASH) | (1L << AT) | (1L << MINUS) | (1L << MUL) | (1L << LPAREN) | (1L << HEX_LITERAL) | (1L << CHAR_LITERAL) | (1L << ID) | (1L << NUMBER) | (1L << HEX))) != 0)) {
 				{
 				State = 92; f3Operands();
 				}
@@ -961,8 +961,8 @@ public partial class SICXEParser : Parser {
 	}
 
 	public partial class SimpleOperandContext : ParserRuleContext {
-		public ValueContext value() {
-			return GetRuleContext<ValueContext>(0);
+		public ExprContext expr() {
+			return GetRuleContext<ExprContext>(0);
 		}
 		public SimpleOperandContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -991,7 +991,7 @@ public partial class SICXEParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 117; value();
+			State = 117; expr(0);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1006,8 +1006,8 @@ public partial class SICXEParser : Parser {
 	}
 
 	public partial class IndexedOperandContext : ParserRuleContext {
-		public ValueContext value() {
-			return GetRuleContext<ValueContext>(0);
+		public ExprContext expr() {
+			return GetRuleContext<ExprContext>(0);
 		}
 		public ITerminalNode COMMA() { return GetToken(SICXEParser.COMMA, 0); }
 		public ITerminalNode REG() { return GetToken(SICXEParser.REG, 0); }
@@ -1038,7 +1038,7 @@ public partial class SICXEParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 119; value();
+			State = 119; expr(0);
 			State = 120; Match(COMMA);
 			State = 121; Match(REG);
 			}
@@ -1056,8 +1056,8 @@ public partial class SICXEParser : Parser {
 
 	public partial class ImmediateOperandContext : ParserRuleContext {
 		public ITerminalNode HASH() { return GetToken(SICXEParser.HASH, 0); }
-		public ValueContext value() {
-			return GetRuleContext<ValueContext>(0);
+		public ExprContext expr() {
+			return GetRuleContext<ExprContext>(0);
 		}
 		public ImmediateOperandContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -1087,7 +1087,7 @@ public partial class SICXEParser : Parser {
 			EnterOuterAlt(_localctx, 1);
 			{
 			State = 123; Match(HASH);
-			State = 124; value();
+			State = 124; expr(0);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1103,8 +1103,8 @@ public partial class SICXEParser : Parser {
 
 	public partial class IndirectOperandContext : ParserRuleContext {
 		public ITerminalNode AT() { return GetToken(SICXEParser.AT, 0); }
-		public ValueContext value() {
-			return GetRuleContext<ValueContext>(0);
+		public ExprContext expr() {
+			return GetRuleContext<ExprContext>(0);
 		}
 		public IndirectOperandContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -1134,7 +1134,7 @@ public partial class SICXEParser : Parser {
 			EnterOuterAlt(_localctx, 1);
 			{
 			State = 126; Match(AT);
-			State = 127; value();
+			State = 127; expr(0);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1185,7 +1185,7 @@ public partial class SICXEParser : Parser {
 			State = 131;
 			_errHandler.Sync(this);
 			_la = _input.La(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LPAREN) | (1L << HEX_LITERAL) | (1L << CHAR_LITERAL) | (1L << ID) | (1L << NUMBER) | (1L << HEX))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MINUS) | (1L << MUL) | (1L << LPAREN) | (1L << HEX_LITERAL) | (1L << CHAR_LITERAL) | (1L << ID) | (1L << NUMBER) | (1L << HEX))) != 0)) {
 				{
 				State = 130; expr(0);
 				}
@@ -1313,6 +1313,7 @@ public partial class SICXEParser : Parser {
 		public FactorContext factor() {
 			return GetRuleContext<FactorContext>(0);
 		}
+		public ITerminalNode DIV() { return GetToken(SICXEParser.DIV, 0); }
 		public TermContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -1353,27 +1354,44 @@ public partial class SICXEParser : Parser {
 			State = 148; factor();
 			}
 			_ctx.stop = _input.Lt(-1);
-			State = 155;
+			State = 158;
 			_errHandler.Sync(this);
-			_alt = Interpreter.AdaptivePredict(_input,13,_ctx);
+			_alt = Interpreter.AdaptivePredict(_input,14,_ctx);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.InvalidAltNumber ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) TriggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					{
-					_localctx = new TermContext(_parentctx, _parentState);
-					PushNewRecursionContext(_localctx, _startState, RULE_term);
-					State = 150;
-					if (!(Precpred(_ctx, 2))) throw new FailedPredicateException(this, "Precpred(_ctx, 2)");
-					State = 151; Match(MUL);
-					State = 152; factor();
+					State = 156;
+					_errHandler.Sync(this);
+					switch ( Interpreter.AdaptivePredict(_input,13,_ctx) ) {
+					case 1:
+						{
+						_localctx = new TermContext(_parentctx, _parentState);
+						PushNewRecursionContext(_localctx, _startState, RULE_term);
+						State = 150;
+						if (!(Precpred(_ctx, 3))) throw new FailedPredicateException(this, "Precpred(_ctx, 3)");
+						State = 151; Match(MUL);
+						State = 152; factor();
+						}
+						break;
+
+					case 2:
+						{
+						_localctx = new TermContext(_parentctx, _parentState);
+						PushNewRecursionContext(_localctx, _startState, RULE_term);
+						State = 153;
+						if (!(Precpred(_ctx, 2))) throw new FailedPredicateException(this, "Precpred(_ctx, 2)");
+						State = 154; Match(DIV);
+						State = 155; factor();
+						}
+						break;
 					}
 					} 
 				}
-				State = 157;
+				State = 160;
 				_errHandler.Sync(this);
-				_alt = Interpreter.AdaptivePredict(_input,13,_ctx);
+				_alt = Interpreter.AdaptivePredict(_input,14,_ctx);
 			}
 			}
 		}
@@ -1391,6 +1409,10 @@ public partial class SICXEParser : Parser {
 	public partial class FactorContext : ParserRuleContext {
 		public ValueContext value() {
 			return GetRuleContext<ValueContext>(0);
+		}
+		public ITerminalNode MINUS() { return GetToken(SICXEParser.MINUS, 0); }
+		public FactorContext factor() {
+			return GetRuleContext<FactorContext>(0);
 		}
 		public ITerminalNode LPAREN() { return GetToken(SICXEParser.LPAREN, 0); }
 		public ExprContext expr() {
@@ -1422,9 +1444,10 @@ public partial class SICXEParser : Parser {
 		FactorContext _localctx = new FactorContext(_ctx, State);
 		EnterRule(_localctx, 42, RULE_factor);
 		try {
-			State = 163;
+			State = 168;
 			_errHandler.Sync(this);
 			switch (_input.La(1)) {
+			case MUL:
 			case HEX_LITERAL:
 			case CHAR_LITERAL:
 			case ID:
@@ -1432,15 +1455,22 @@ public partial class SICXEParser : Parser {
 			case HEX:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 158; value();
+				State = 161; value();
+				}
+				break;
+			case MINUS:
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 162; Match(MINUS);
+				State = 163; factor();
 				}
 				break;
 			case LPAREN:
-				EnterOuterAlt(_localctx, 2);
+				EnterOuterAlt(_localctx, 3);
 				{
-				State = 159; Match(LPAREN);
-				State = 160; expr(0);
-				State = 161; Match(RPAREN);
+				State = 164; Match(LPAREN);
+				State = 165; expr(0);
+				State = 166; Match(RPAREN);
 				}
 				break;
 			default:
@@ -1464,6 +1494,7 @@ public partial class SICXEParser : Parser {
 		public ITerminalNode HEX() { return GetToken(SICXEParser.HEX, 0); }
 		public ITerminalNode CHAR_LITERAL() { return GetToken(SICXEParser.CHAR_LITERAL, 0); }
 		public ITerminalNode HEX_LITERAL() { return GetToken(SICXEParser.HEX_LITERAL, 0); }
+		public ITerminalNode MUL() { return GetToken(SICXEParser.MUL, 0); }
 		public ValueContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -1492,9 +1523,9 @@ public partial class SICXEParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 165;
+			State = 170;
 			_la = _input.La(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << HEX_LITERAL) | (1L << CHAR_LITERAL) | (1L << ID) | (1L << NUMBER) | (1L << HEX))) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MUL) | (1L << HEX_LITERAL) | (1L << CHAR_LITERAL) | (1L << ID) | (1L << NUMBER) | (1L << HEX))) != 0)) ) {
 			_errHandler.RecoverInline(this);
 			} else {
 				if (_input.La(1) == TokenConstants.Eof) {
@@ -1535,13 +1566,15 @@ public partial class SICXEParser : Parser {
 	}
 	private bool term_sempred(TermContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 2: return Precpred(_ctx, 2);
+		case 2: return Precpred(_ctx, 3);
+
+		case 3: return Precpred(_ctx, 2);
 		}
 		return true;
 	}
 
 	public static readonly string _serializedATN =
-		"\x3\xAF6F\x8320\x479D\xB75C\x4880\x1605\x191C\xAB37\x3\x1A\xAA\x4\x2\t"+
+		"\x3\xAF6F\x8320\x479D\xB75C\x4880\x1605\x191C\xAB37\x3\x1B\xAF\x4\x2\t"+
 		"\x2\x4\x3\t\x3\x4\x4\t\x4\x4\x5\t\x5\x4\x6\t\x6\x4\a\t\a\x4\b\t\b\x4\t"+
 		"\t\t\x4\n\t\n\x4\v\t\v\x4\f\t\f\x4\r\t\r\x4\xE\t\xE\x4\xF\t\xF\x4\x10"+
 		"\t\x10\x4\x11\t\x11\x4\x12\t\x12\x4\x13\t\x13\x4\x14\t\x14\x4\x15\t\x15"+
@@ -1555,51 +1588,53 @@ public partial class SICXEParser : Parser {
 		"\x3\x12\x3\x12\x3\x13\x3\x13\x3\x13\x3\x14\x3\x14\x5\x14\x86\n\x14\x3"+
 		"\x15\x3\x15\x3\x15\x3\x15\x3\x15\x3\x15\x3\x15\x3\x15\x3\x15\a\x15\x91"+
 		"\n\x15\f\x15\xE\x15\x94\v\x15\x3\x16\x3\x16\x3\x16\x3\x16\x3\x16\x3\x16"+
-		"\a\x16\x9C\n\x16\f\x16\xE\x16\x9F\v\x16\x3\x17\x3\x17\x3\x17\x3\x17\x3"+
-		"\x17\x5\x17\xA6\n\x17\x3\x18\x3\x18\x3\x18\x2\x2\x4(*\x19\x2\x2\x4\x2"+
-		"\x6\x2\b\x2\n\x2\f\x2\xE\x2\x10\x2\x12\x2\x14\x2\x16\x2\x18\x2\x1A\x2"+
-		"\x1C\x2\x1E\x2 \x2\"\x2$\x2&\x2(\x2*\x2,\x2.\x2\x2\x3\x3\x2\x13\x17\xA7"+
-		"\x2\x33\x3\x2\x2\x2\x4\x39\x3\x2\x2\x2\x6\x41\x3\x2\x2\x2\b\x43\x3\x2"+
-		"\x2\x2\nH\x3\x2\x2\x2\fJ\x3\x2\x2\x2\xEU\x3\x2\x2\x2\x10[\x3\x2\x2\x2"+
-		"\x12]\x3\x2\x2\x2\x14\x65\x3\x2\x2\x2\x16g\x3\x2\x2\x2\x18j\x3\x2\x2\x2"+
-		"\x1Ao\x3\x2\x2\x2\x1Ct\x3\x2\x2\x2\x1Ew\x3\x2\x2\x2 y\x3\x2\x2\x2\"}\x3"+
-		"\x2\x2\x2$\x80\x3\x2\x2\x2&\x83\x3\x2\x2\x2(\x87\x3\x2\x2\x2*\x95\x3\x2"+
-		"\x2\x2,\xA5\x3\x2\x2\x2.\xA7\x3\x2\x2\x2\x30\x32\x5\x4\x3\x2\x31\x30\x3"+
-		"\x2\x2\x2\x32\x35\x3\x2\x2\x2\x33\x31\x3\x2\x2\x2\x33\x34\x3\x2\x2\x2"+
-		"\x34\x36\x3\x2\x2\x2\x35\x33\x3\x2\x2\x2\x36\x37\a\x2\x2\x3\x37\x3\x3"+
-		"\x2\x2\x2\x38:\x5\b\x5\x2\x39\x38\x3\x2\x2\x2\x39:\x3\x2\x2\x2:;\x3\x2"+
-		"\x2\x2;<\x5\x6\x4\x2<=\a\x19\x2\x2=\x5\x3\x2\x2\x2>\x42\x5\f\a\x2?\x42"+
-		"\x5\n\x6\x2@\x42\x5&\x14\x2\x41>\x3\x2\x2\x2\x41?\x3\x2\x2\x2\x41@\x3"+
-		"\x2\x2\x2\x42\a\x3\x2\x2\x2\x43\x44\a\x15\x2\x2\x44\t\x3\x2\x2\x2\x45"+
-		"I\x5\xE\b\x2\x46I\x5\x10\t\x2GI\x5\x12\n\x2H\x45\x3\x2\x2\x2H\x46\x3\x2"+
-		"\x2\x2HG\x3\x2\x2\x2I\v\x3\x2\x2\x2JK\a\x3\x2\x2KL\x5\x12\n\x2L\r\x3\x2"+
-		"\x2\x2MO\a\v\x2\x2NP\x5\x14\v\x2ON\x3\x2\x2\x2OP\x3\x2\x2\x2PV\x3\x2\x2"+
-		"\x2QS\a\v\x2\x2RT\x5.\x18\x2SR\x3\x2\x2\x2ST\x3\x2\x2\x2TV\x3\x2\x2\x2"+
-		"UM\x3\x2\x2\x2UQ\x3\x2\x2\x2V\xF\x3\x2\x2\x2W\\\x5\x16\f\x2X\\\x5\x18"+
-		"\r\x2Y\\\x5\x1A\xE\x2Z\\\x5\x1C\xF\x2[W\x3\x2\x2\x2[X\x3\x2\x2\x2[Y\x3"+
-		"\x2\x2\x2[Z\x3\x2\x2\x2\\\x11\x3\x2\x2\x2]_\a\x10\x2\x2^`\x5\x14\v\x2"+
-		"_^\x3\x2\x2\x2_`\x3\x2\x2\x2`\x13\x3\x2\x2\x2\x61\x66\x5\x1E\x10\x2\x62"+
-		"\x66\x5 \x11\x2\x63\x66\x5\"\x12\x2\x64\x66\x5$\x13\x2\x65\x61\x3\x2\x2"+
-		"\x2\x65\x62\x3\x2\x2\x2\x65\x63\x3\x2\x2\x2\x65\x64\x3\x2\x2\x2\x66\x15"+
-		"\x3\x2\x2\x2gh\a\f\x2\x2hi\a\x12\x2\x2i\x17\x3\x2\x2\x2jk\a\r\x2\x2kl"+
-		"\a\x12\x2\x2lm\a\x4\x2\x2mn\a\x12\x2\x2n\x19\x3\x2\x2\x2op\a\xE\x2\x2"+
-		"pq\a\x12\x2\x2qr\a\x4\x2\x2rs\a\x16\x2\x2s\x1B\x3\x2\x2\x2tu\a\xF\x2\x2"+
-		"uv\a\x16\x2\x2v\x1D\x3\x2\x2\x2wx\x5.\x18\x2x\x1F\x3\x2\x2\x2yz\x5.\x18"+
-		"\x2z{\a\x4\x2\x2{|\a\x12\x2\x2|!\x3\x2\x2\x2}~\a\x5\x2\x2~\x7F\x5.\x18"+
-		"\x2\x7F#\x3\x2\x2\x2\x80\x81\a\x6\x2\x2\x81\x82\x5.\x18\x2\x82%\x3\x2"+
-		"\x2\x2\x83\x85\a\x11\x2\x2\x84\x86\x5(\x15\x2\x85\x84\x3\x2\x2\x2\x85"+
-		"\x86\x3\x2\x2\x2\x86\'\x3\x2\x2\x2\x87\x88\b\x15\x1\x2\x88\x89\x5*\x16"+
-		"\x2\x89\x92\x3\x2\x2\x2\x8A\x8B\f\x5\x2\x2\x8B\x8C\a\x3\x2\x2\x8C\x91"+
-		"\x5*\x16\x2\x8D\x8E\f\x4\x2\x2\x8E\x8F\a\a\x2\x2\x8F\x91\x5*\x16\x2\x90"+
-		"\x8A\x3\x2\x2\x2\x90\x8D\x3\x2\x2\x2\x91\x94\x3\x2\x2\x2\x92\x90\x3\x2"+
-		"\x2\x2\x92\x93\x3\x2\x2\x2\x93)\x3\x2\x2\x2\x94\x92\x3\x2\x2\x2\x95\x96"+
-		"\b\x16\x1\x2\x96\x97\x5,\x17\x2\x97\x9D\x3\x2\x2\x2\x98\x99\f\x4\x2\x2"+
-		"\x99\x9A\a\b\x2\x2\x9A\x9C\x5,\x17\x2\x9B\x98\x3\x2\x2\x2\x9C\x9F\x3\x2"+
-		"\x2\x2\x9D\x9B\x3\x2\x2\x2\x9D\x9E\x3\x2\x2\x2\x9E+\x3\x2\x2\x2\x9F\x9D"+
-		"\x3\x2\x2\x2\xA0\xA6\x5.\x18\x2\xA1\xA2\a\t\x2\x2\xA2\xA3\x5(\x15\x2\xA3"+
-		"\xA4\a\n\x2\x2\xA4\xA6\x3\x2\x2\x2\xA5\xA0\x3\x2\x2\x2\xA5\xA1\x3\x2\x2"+
-		"\x2\xA6-\x3\x2\x2\x2\xA7\xA8\t\x2\x2\x2\xA8/\x3\x2\x2\x2\x11\x33\x39\x41"+
-		"HOSU[_\x65\x85\x90\x92\x9D\xA5";
+		"\x3\x16\x3\x16\x3\x16\a\x16\x9F\n\x16\f\x16\xE\x16\xA2\v\x16\x3\x17\x3"+
+		"\x17\x3\x17\x3\x17\x3\x17\x3\x17\x3\x17\x5\x17\xAB\n\x17\x3\x18\x3\x18"+
+		"\x3\x18\x2\x2\x4(*\x19\x2\x2\x4\x2\x6\x2\b\x2\n\x2\f\x2\xE\x2\x10\x2\x12"+
+		"\x2\x14\x2\x16\x2\x18\x2\x1A\x2\x1C\x2\x1E\x2 \x2\"\x2$\x2&\x2(\x2*\x2"+
+		",\x2.\x2\x2\x3\x4\x2\b\b\x14\x18\xAE\x2\x33\x3\x2\x2\x2\x4\x39\x3\x2\x2"+
+		"\x2\x6\x41\x3\x2\x2\x2\b\x43\x3\x2\x2\x2\nH\x3\x2\x2\x2\fJ\x3\x2\x2\x2"+
+		"\xEU\x3\x2\x2\x2\x10[\x3\x2\x2\x2\x12]\x3\x2\x2\x2\x14\x65\x3\x2\x2\x2"+
+		"\x16g\x3\x2\x2\x2\x18j\x3\x2\x2\x2\x1Ao\x3\x2\x2\x2\x1Ct\x3\x2\x2\x2\x1E"+
+		"w\x3\x2\x2\x2 y\x3\x2\x2\x2\"}\x3\x2\x2\x2$\x80\x3\x2\x2\x2&\x83\x3\x2"+
+		"\x2\x2(\x87\x3\x2\x2\x2*\x95\x3\x2\x2\x2,\xAA\x3\x2\x2\x2.\xAC\x3\x2\x2"+
+		"\x2\x30\x32\x5\x4\x3\x2\x31\x30\x3\x2\x2\x2\x32\x35\x3\x2\x2\x2\x33\x31"+
+		"\x3\x2\x2\x2\x33\x34\x3\x2\x2\x2\x34\x36\x3\x2\x2\x2\x35\x33\x3\x2\x2"+
+		"\x2\x36\x37\a\x2\x2\x3\x37\x3\x3\x2\x2\x2\x38:\x5\b\x5\x2\x39\x38\x3\x2"+
+		"\x2\x2\x39:\x3\x2\x2\x2:;\x3\x2\x2\x2;<\x5\x6\x4\x2<=\a\x1A\x2\x2=\x5"+
+		"\x3\x2\x2\x2>\x42\x5\f\a\x2?\x42\x5\n\x6\x2@\x42\x5&\x14\x2\x41>\x3\x2"+
+		"\x2\x2\x41?\x3\x2\x2\x2\x41@\x3\x2\x2\x2\x42\a\x3\x2\x2\x2\x43\x44\a\x16"+
+		"\x2\x2\x44\t\x3\x2\x2\x2\x45I\x5\xE\b\x2\x46I\x5\x10\t\x2GI\x5\x12\n\x2"+
+		"H\x45\x3\x2\x2\x2H\x46\x3\x2\x2\x2HG\x3\x2\x2\x2I\v\x3\x2\x2\x2JK\a\x3"+
+		"\x2\x2KL\x5\x12\n\x2L\r\x3\x2\x2\x2MO\a\f\x2\x2NP\x5\x14\v\x2ON\x3\x2"+
+		"\x2\x2OP\x3\x2\x2\x2PV\x3\x2\x2\x2QS\a\f\x2\x2RT\x5.\x18\x2SR\x3\x2\x2"+
+		"\x2ST\x3\x2\x2\x2TV\x3\x2\x2\x2UM\x3\x2\x2\x2UQ\x3\x2\x2\x2V\xF\x3\x2"+
+		"\x2\x2W\\\x5\x16\f\x2X\\\x5\x18\r\x2Y\\\x5\x1A\xE\x2Z\\\x5\x1C\xF\x2["+
+		"W\x3\x2\x2\x2[X\x3\x2\x2\x2[Y\x3\x2\x2\x2[Z\x3\x2\x2\x2\\\x11\x3\x2\x2"+
+		"\x2]_\a\x11\x2\x2^`\x5\x14\v\x2_^\x3\x2\x2\x2_`\x3\x2\x2\x2`\x13\x3\x2"+
+		"\x2\x2\x61\x66\x5\x1E\x10\x2\x62\x66\x5 \x11\x2\x63\x66\x5\"\x12\x2\x64"+
+		"\x66\x5$\x13\x2\x65\x61\x3\x2\x2\x2\x65\x62\x3\x2\x2\x2\x65\x63\x3\x2"+
+		"\x2\x2\x65\x64\x3\x2\x2\x2\x66\x15\x3\x2\x2\x2gh\a\r\x2\x2hi\a\x13\x2"+
+		"\x2i\x17\x3\x2\x2\x2jk\a\xE\x2\x2kl\a\x13\x2\x2lm\a\x4\x2\x2mn\a\x13\x2"+
+		"\x2n\x19\x3\x2\x2\x2op\a\xF\x2\x2pq\a\x13\x2\x2qr\a\x4\x2\x2rs\a\x17\x2"+
+		"\x2s\x1B\x3\x2\x2\x2tu\a\x10\x2\x2uv\a\x17\x2\x2v\x1D\x3\x2\x2\x2wx\x5"+
+		"(\x15\x2x\x1F\x3\x2\x2\x2yz\x5(\x15\x2z{\a\x4\x2\x2{|\a\x13\x2\x2|!\x3"+
+		"\x2\x2\x2}~\a\x5\x2\x2~\x7F\x5(\x15\x2\x7F#\x3\x2\x2\x2\x80\x81\a\x6\x2"+
+		"\x2\x81\x82\x5(\x15\x2\x82%\x3\x2\x2\x2\x83\x85\a\x12\x2\x2\x84\x86\x5"+
+		"(\x15\x2\x85\x84\x3\x2\x2\x2\x85\x86\x3\x2\x2\x2\x86\'\x3\x2\x2\x2\x87"+
+		"\x88\b\x15\x1\x2\x88\x89\x5*\x16\x2\x89\x92\x3\x2\x2\x2\x8A\x8B\f\x5\x2"+
+		"\x2\x8B\x8C\a\x3\x2\x2\x8C\x91\x5*\x16\x2\x8D\x8E\f\x4\x2\x2\x8E\x8F\a"+
+		"\a\x2\x2\x8F\x91\x5*\x16\x2\x90\x8A\x3\x2\x2\x2\x90\x8D\x3\x2\x2\x2\x91"+
+		"\x94\x3\x2\x2\x2\x92\x90\x3\x2\x2\x2\x92\x93\x3\x2\x2\x2\x93)\x3\x2\x2"+
+		"\x2\x94\x92\x3\x2\x2\x2\x95\x96\b\x16\x1\x2\x96\x97\x5,\x17\x2\x97\xA0"+
+		"\x3\x2\x2\x2\x98\x99\f\x5\x2\x2\x99\x9A\a\b\x2\x2\x9A\x9F\x5,\x17\x2\x9B"+
+		"\x9C\f\x4\x2\x2\x9C\x9D\a\t\x2\x2\x9D\x9F\x5,\x17\x2\x9E\x98\x3\x2\x2"+
+		"\x2\x9E\x9B\x3\x2\x2\x2\x9F\xA2\x3\x2\x2\x2\xA0\x9E\x3\x2\x2\x2\xA0\xA1"+
+		"\x3\x2\x2\x2\xA1+\x3\x2\x2\x2\xA2\xA0\x3\x2\x2\x2\xA3\xAB\x5.\x18\x2\xA4"+
+		"\xA5\a\a\x2\x2\xA5\xAB\x5,\x17\x2\xA6\xA7\a\n\x2\x2\xA7\xA8\x5(\x15\x2"+
+		"\xA8\xA9\a\v\x2\x2\xA9\xAB\x3\x2\x2\x2\xAA\xA3\x3\x2\x2\x2\xAA\xA4\x3"+
+		"\x2\x2\x2\xAA\xA6\x3\x2\x2\x2\xAB-\x3\x2\x2\x2\xAC\xAD\t\x2\x2\x2\xAD"+
+		"/\x3\x2\x2\x2\x12\x33\x39\x41HOSU[_\x65\x85\x90\x92\x9E\xA0\xAA";
 	public static readonly ATN _ATN =
 		new ATNDeserializer().Deserialize(_serializedATN.ToCharArray());
 }

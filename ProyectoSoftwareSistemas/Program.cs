@@ -111,7 +111,7 @@ namespace ProyectoSoftwareSistemas
                     // --- PASADA 1: Generación de direcciones ---
                     var generadorIntermedio = new GeneradorArchivoIntermedio(root);
                     List<LineaIntermedia> lineas = generadorIntermedio.GenerarLineas();
-                    Dictionary<string, string> tabsim = generadorIntermedio.GetTabSim();
+                    Dictionary<string, Simbolo> tabsim = generadorIntermedio.GetTabSim();
 
                     // --- PASADA 2: Generación de Código Objeto (Hexadecimales) ---
                     var generadorCodigoObjeto = new GeneradorCodigoObjeto(tabsim, lineas);
