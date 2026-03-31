@@ -9,7 +9,7 @@ namespace ProyectoSoftwareSistemas
     public class GeneradorProgramaObjeto
     {
         private List<LineaIntermedia> _lineas;
-        private Dictionary<string, string> _tablaSimbolos;
+        private Dictionary<string, Simbolo> _tablaSimbolos;
 
         private bool EsFormato1(string codop)
         {
@@ -54,7 +54,7 @@ namespace ProyectoSoftwareSistemas
             return EsFormato1(codop) || EsFormato2(codop) || EsFormato3(codop);
         }
 
-        public GeneradorProgramaObjeto(List<LineaIntermedia> lineas, Dictionary<string, string> tablaSimbolos)
+        public GeneradorProgramaObjeto(List<LineaIntermedia> lineas, Dictionary<string, Simbolo> tablaSimbolos)
         {
             _lineas = lineas;
             _tablaSimbolos = tablaSimbolos;
@@ -143,11 +143,18 @@ namespace ProyectoSoftwareSistemas
                 currentTCode += objeto;
 
                 //Si es formato 4, agregar un registro de modificacion
-                if(requiereM)
+                if (requiereM)
                 {
-                    //La modificacion empieza en el medio byte 3 (Dirreccion + 1)
-                    int mAddr = Convert.ToInt32(linea.ContadorPrograma, 16) + 1;
-                    regM.Add($"M{mAddr:X6}05+{nomPrograma}");
+                    int direccion = Convert.ToInt32(linea.ContadorPrograma, 16);
+
+                    if (linea.CodigoOp == "WORD")
+                    {
+                        regM.Add($"M{direccion:X6}06+{nomPrograma}");
+                    }
+                    else
+                    {
+                        regM.Add($"M{(direccion + 1):X6}05+{nomPrograma}");
+                    }
                 }
             }
 
@@ -160,7 +167,7 @@ namespace ProyectoSoftwareSistemas
             if(endLine != null && !string.IsNullOrWhiteSpace(endLine.Operador))
             {
                 if(_tablaSimbolos.ContainsKey(endLine.Operador))
-                    direccionEjecucion = Convert.ToInt32(_tablaSimbolos[endLine.Operador], 16);
+                    direccionEjecucion = _tablaSimbolos[endLine.Operador].Direccion;
             }
             else
             {

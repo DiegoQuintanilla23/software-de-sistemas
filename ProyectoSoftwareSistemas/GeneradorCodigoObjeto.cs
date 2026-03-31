@@ -9,16 +9,18 @@ namespace ProyectoSoftwareSistemas
 {
     public class GeneradorCodigoObjeto
     {
-        private Dictionary<string, string> _tabSim;
+        private Dictionary<string, Simbolo> _tabSim;
         private List<LineaIntermedia> _lineas;
         private Dictionary<string, int> _registros;
         private int? _baseAddress = null;
+        private EvaluadorExpresiones _evaluador;
 
         private Dictionary<string, string> _opcodes;
-        public GeneradorCodigoObjeto(Dictionary<string, string> TABSIM, List<LineaIntermedia> lineas)
+        public GeneradorCodigoObjeto(Dictionary<string, Simbolo> TABSIM, List<LineaIntermedia> lineas)
         {
             _tabSim = TABSIM;
             _lineas = lineas;
+            _evaluador = new EvaluadorExpresiones(_tabSim);
             InicializarOpcodes();
             InicializarRegistros();
         }
@@ -179,31 +181,26 @@ namespace ProyectoSoftwareSistemas
                 return;
             }
 
-            string operando = linea.Operador.Trim().ToUpper();
+            var resultado = _evaluador.Evaluar(linea, Convert.ToInt32(linea.ContadorPrograma, 16));
 
-            try
+            if (resultado.Error)
             {
-                int valor;
-
-                // Caso hexadecimal con H al final
-                if (operando.EndsWith("H"))
-                {
-                    operando = operando.Substring(0, operando.Length - 1);
-                    valor = Convert.ToInt32(operando, 16);
-                }
-                else
-                {
-                    // Caso decimal
-                    valor = Convert.ToInt32(operando);
-                }
-
-                // WORD es 3 bytes → 6 dígitos hex
-                linea.CodigoObjeto = valor.ToString("X6");
+                AgregarError(linea, resultado.MensajeError);
+                linea.CodigoObjeto = "FFFFFF";
+                return;
             }
-            catch
+
+            int valor = resultado.Valor & 0xFFFFFF;
+
+            string objeto = valor.ToString("X6");
+
+            //  SI ES RELATIVO - marcar como modificable
+            if (resultado.EsRelativo)
             {
-                AgregarError(linea, "Error: Operando inválido en WORD");
+                objeto += "*";
             }
+
+            linea.CodigoObjeto = objeto;
         }
 
         private void GenerarByte(LineaIntermedia linea)
@@ -244,7 +241,7 @@ namespace ProyectoSoftwareSistemas
                     return;
                 }
 
-                // Si es impar → completar con 0 a la izquierda
+                // Si es impar - completar con 0 a la izquierda
                 if (contenido.Length % 2 != 0)
                 {
                     contenido = "0" + contenido;
@@ -308,19 +305,21 @@ namespace ProyectoSoftwareSistemas
         private void GenerarFormato3(LineaIntermedia linea)
         {
             string codop = linea.CodigoOp;
+
             // Caso especial RSUB
             if (codop == "RSUB")
             {
                 linea.CodigoObjeto = "4F0000";
                 return;
             }
+
             string opcodeHex = _opcodes[codop];
             int opcode = Convert.ToInt32(opcodeHex, 16);
 
             // limpiar últimos 2 bits
             opcode = opcode & 0xFC;
 
-            string operando = linea.Operador?.Trim() ?? "";
+            string operando = linea.Operador?.Trim().ToUpper() ?? "";
 
             if (operando.Contains("@") && operando.Contains("#"))
             {
@@ -355,48 +354,87 @@ namespace ProyectoSoftwareSistemas
 
             int direccionSimbolo = 0;
 
-            // Si es número inmediato
-            if (int.TryParse(operando, out int valorInmediato))
+            //  Evaluar expresión
+            var lineaEval = new LineaIntermedia { Operador = operando };
+            var resultado = _evaluador.Evaluar(lineaEval, Convert.ToInt32(linea.ContadorPrograma, 16));
+
+            // - Error en evaluación
+            if (resultado.Error)
             {
-                direccionSimbolo = valorInmediato;
-                p = 0;
-                b = 0;
+                AgregarError(linea, resultado.MensajeError);
+
+                b = 1;
+                p = 1;
+
+                int flagsError = (x << 3) | (b << 2) | (p << 1) | e;
+
+                int codigoError =
+                    (opcode << 16) |
+                    (flagsError << 12) |
+                    0xFFF;
+
+                linea.CodigoObjeto = codigoError.ToString("X6");
+                return;
             }
+
+            //  CASO 1: EXPRESIÓN ABSOLUTA
+            if (!resultado.EsRelativo)
+            {
+                int valor = resultado.Valor;
+
+                //  CASO INMEDIATO (#)
+                if (n == 0 && i == 1)
+                {
+                    // rango válido 12 bits (0 a 4095)
+                    if (valor < 0 || valor > 4095)
+                    {
+                        AgregarError(linea, "Error: Constante fuera de rango");
+
+                        b = 1;
+                        p = 1;
+
+                        int flagsError = (x << 3) | (b << 2) | (p << 1) | e;
+
+                        int codigoError =
+                            (opcode << 16) |
+                            (flagsError << 12) |
+                            0xFFF;
+
+                        linea.CodigoObjeto = codigoError.ToString("X6");
+                        return;
+                    }
+
+                    direccionSimbolo = valor;
+                    p = 0;
+                    b = 0;
+                }
+                else
+                {
+                    // caso normal absoluto (raro en formato 3)
+                    direccionSimbolo = valor;
+                    p = 0;
+                    b = 0;
+                }
+            }
+            //  CASO 2: EXPRESIÓN RELATIVA
             else
             {
-                if (!_tabSim.ContainsKey(operando))
-                {
-                    AgregarError(linea, "Error: Símbolo no encontrado");
-
-                    b = 1;
-                    p = 1;
-
-                    int flagsError = (x << 3) | (b << 2) | (p << 1) | e;
-
-                    int codigoError =
-                        (opcode << 16) |
-                        (flagsError << 12) |
-                        0xFFF;   // -1 en 12 bits
-
-                    linea.CodigoObjeto = codigoError.ToString("X6");
-                    return;
-                }
-
-                direccionSimbolo = Convert.ToInt32(_tabSim[operando], 16);
+                int direccion = resultado.Valor;
 
                 int pc = Convert.ToInt32(linea.ContadorPrograma, 16) + 3;
-                int disp = direccionSimbolo - pc;
+                int disp = direccion - pc;
 
+                //- PC-relative
                 if (disp >= -2048 && disp <= 2047)
                 {
                     p = 1;
                     direccionSimbolo = disp & 0xFFF;
                 }
+                //- BASE-relative
                 else if (_baseAddress.HasValue)
                 {
-                    int dispBase = direccionSimbolo - _baseAddress.Value;
+                    int dispBase = direccion - _baseAddress.Value;
 
-                    // Intentar BASE relative
                     if (dispBase >= 0 && dispBase <= 4095)
                     {
                         b = 1;
@@ -599,7 +637,7 @@ namespace ProyectoSoftwareSistemas
                     return;
                 }
 
-                direccion = Convert.ToInt32(_tabSim[operando], 16);
+                direccion = _tabSim[operando].Direccion;
             }
 
             int flags = (x << 3) | (b << 2) | (p << 1) | e;
@@ -638,7 +676,7 @@ namespace ProyectoSoftwareSistemas
                 if (linea.CodigoOp == "BASE")
                 {
                     if (_tabSim.ContainsKey(linea.Operador))
-                        _baseAddress = Convert.ToInt32(_tabSim[linea.Operador], 16);
+                        _baseAddress = _tabSim[linea.Operador].Direccion;
 
                     linea.CodigoObjeto = "----";
                     continue;

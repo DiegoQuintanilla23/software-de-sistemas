@@ -80,19 +80,19 @@ f2_num
     ;
 
 simpleOperand
-    : value
+    : expr
     ;
 
 indexedOperand
-    : value COMMA REG
+    : expr COMMA REG
     ;
 
 immediateOperand
-    : HASH value
+    : HASH expr
     ;
 
 indirectOperand
-    : AT value
+    : AT expr
     ;
 
 /* DIRECTIVAS */
@@ -111,11 +111,13 @@ expr
 
 term
     : term MUL factor
+    | term DIV factor
     | factor
     ;
 
 factor
     : value
+    | MINUS factor
     | LPAREN expr RPAREN
     ;
 
@@ -125,6 +127,7 @@ value
     | HEX
     | CHAR_LITERAL
     | HEX_LITERAL
+    | MUL
     ;
 
 /* TOKENS AUXILIARES */
@@ -135,6 +138,7 @@ HASH  : '#' ;
 AT    : '@' ;
 MINUS  : '-' ;
 MUL    : '*' ;
+DIV   : '/' ;
 LPAREN : '(' ;
 RPAREN : ')' ;
 
