@@ -10,17 +10,19 @@ namespace ProyectoSoftwareSistemas
     public class GeneradorCodigoObjeto
     {
         private Dictionary<string, Simbolo> _tabSim;
+        private Dictionary<string, Bloque> _tabblk;
         private List<LineaIntermedia> _lineas;
         private Dictionary<string, int> _registros;
         private int? _baseAddress = null;
         private EvaluadorExpresiones _evaluador;
 
         private Dictionary<string, string> _opcodes;
-        public GeneradorCodigoObjeto(Dictionary<string, Simbolo> TABSIM, List<LineaIntermedia> lineas)
+        public GeneradorCodigoObjeto(Dictionary<string, Simbolo> TABSIM, List<LineaIntermedia> lineas, Dictionary<string, Bloque> tabblk)
         {
             _tabSim = TABSIM;
+            _tabblk = tabblk;
             _lineas = lineas;
-            _evaluador = new EvaluadorExpresiones(_tabSim);
+            _evaluador = new EvaluadorExpresiones(_tabSim, _tabblk);
             InicializarOpcodes();
             InicializarRegistros();
         }
@@ -190,11 +192,24 @@ namespace ProyectoSoftwareSistemas
                 return;
             }
 
-            int valor = resultado.Valor & 0xFFFFFF;
+            int valor = resultado.Valor;
+
+            // Ajuste por bloques relativos reales
+            foreach (var kv in resultado.BloquesRelativos)
+            {
+                string bloque = kv.Key;
+                int coef = kv.Value;
+
+                if (_tabblk.ContainsKey(bloque))
+                {
+                    valor += coef * _tabblk[bloque].DirInicial;
+                }
+            }
+
+            valor = valor & 0xFFFFFF;
 
             string objeto = valor.ToString("X6");
 
-            //  SI ES RELATIVO - marcar como modificable
             if (resultado.EsRelativo)
             {
                 objeto += "*";
@@ -420,6 +435,16 @@ namespace ProyectoSoftwareSistemas
             else
             {
                 int direccion = resultado.Valor;
+                // ajustar por bloque si aplica
+                if (resultado.EsRelativo)
+                {
+                    // obtener símbolo base de la expresión si es simple
+                    if (_tabSim.ContainsKey(operando))
+                    {
+                        var simbolo = _tabSim[operando];
+                        direccion += _tabblk[simbolo.Bloque].DirInicial;
+                    }
+                }
 
                 int pc = Convert.ToInt32(linea.ContadorPrograma, 16) + 3;
                 int disp = direccion - pc;
@@ -637,7 +662,24 @@ namespace ProyectoSoftwareSistemas
                     return;
                 }
 
-                direccion = _tabSim[operando].Direccion;
+                var simbolo = _tabSim[operando];
+
+                // inmediato (#)
+                if (n == 0 && i == 1)
+                {
+                    if (simbolo.EsRelativo)
+                    {
+                        direccion = simbolo.Direccion + _tabblk[simbolo.Bloque].DirInicial;
+                    }
+                    else
+                    {
+                        direccion = simbolo.Direccion;
+                    }
+                }
+                else
+                {
+                    direccion = simbolo.Direccion + _tabblk[simbolo.Bloque].DirInicial;
+                }
             }
 
             int flags = (x << 3) | (b << 2) | (p << 1) | e;

@@ -59,7 +59,7 @@ namespace ProyectoSoftwareSistemas
             var lista = new List<LineaIntermedia>();
             //int contadorPrograma = 0;
             Stack<int> pilaORG = new Stack<int>();
-            var evaluador = new EvaluadorExpresiones(TABSIM);
+            var evaluador = new EvaluadorExpresiones(TABSIM, TABBLK);
 
             foreach (var linea in _root.line())
             {
@@ -684,6 +684,29 @@ namespace ProyectoSoftwareSistemas
             }
 
             wsBloques.Columns().AdjustToContents();
+
+            // Hoja TABSIM
+            var wsSim = workbook.Worksheets.Add("TABSIM");
+
+            wsSim.Cell(1, 1).Value = "Simbolo";
+            wsSim.Cell(1, 2).Value = "Direccion";
+            wsSim.Cell(1, 3).Value = "Tipo";
+            wsSim.Cell(1, 4).Value = "Relativo";
+            wsSim.Cell(1, 5).Value = "Bloque";
+
+            int filaS = 2;
+
+            foreach (var s in TABSIM.Values)
+            {
+                wsSim.Cell(filaS, 1).Value = s.Nombre;
+                wsSim.Cell(filaS, 2).Value = s.Direccion.ToString("X4");
+                wsSim.Cell(filaS, 3).Value = s.Tipo;
+                wsSim.Cell(filaS, 4).Value = s.EsRelativo ? "Sí" : "No";
+                wsSim.Cell(filaS, 5).Value = s.Bloque;
+                filaS++;
+            }
+
+            wsSim.Columns().AdjustToContents();
 
             string nombreSinExtension = Path.GetFileNameWithoutExtension(nombreArchivo);
             string nuevoNombre = nombreSinExtension + "_ArchivoIntermedio.xlsx";

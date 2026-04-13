@@ -112,9 +112,10 @@ namespace ProyectoSoftwareSistemas
                     var generadorIntermedio = new GeneradorArchivoIntermedio(root);
                     List<LineaIntermedia> lineas = generadorIntermedio.GenerarLineas();
                     Dictionary<string, Simbolo> tabsim = generadorIntermedio.GetTabSim();
+                    Dictionary<string, Bloque> tabblk = generadorIntermedio.GetTabBlk();
 
                     // --- PASADA 2: Generación de Código Objeto (Hexadecimales) ---
-                    var generadorCodigoObjeto = new GeneradorCodigoObjeto(tabsim, lineas);
+                    var generadorCodigoObjeto = new GeneradorCodigoObjeto(tabsim, lineas, tabblk);
                     generadorCodigoObjeto.Generar();
 
                     // --- PASADA 3: Creación de Registros (H, T, M, E) ---
