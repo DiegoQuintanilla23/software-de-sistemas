@@ -52,7 +52,7 @@ namespace ProyectoSoftwareSistemas
                 return Error("Error de sintaxis");
 
             // VALIDACIÓN FINAL DE RELATIVOS
-            if (res.RelCount != 0 && res.RelCount != 1)
+            if (res.RelCount > 1 || res.RelCount < -1)
                 return Error("Expresión relativa inválida");
 
             res.Tipo = res.EsRelativo ? "R" : "A";
@@ -129,40 +129,42 @@ namespace ProyectoSoftwareSistemas
             while (_pos < _expr.Length)
             {
                 char op = _expr[_pos];
-
-                if (op != '*' && op != '/')
-                    break;
-
+                if (op != '*' && op != '/') break;
                 _pos++;
 
                 var right = ParseFactor();
-
                 if (left.Error) return left;
                 if (right.Error) return right;
 
-                // - Regla SIC/XE
                 if (left.RelCount != 0 || right.RelCount != 0)
                     return Error("Relativos no permitidos en * o /");
 
-                int valor;
+                // ← NUEVO: aplicar ajustes de bloque antes de operar
+                int valorLeft = left.Valor;
+                foreach (var kv in left.BloquesRelativos)
+                    if (_tabblk.ContainsKey(kv.Key))
+                        valorLeft += kv.Value * _tabblk[kv.Key].DirInicial;
 
+                int valorRight = right.Valor;
+                foreach (var kv in right.BloquesRelativos)
+                    if (_tabblk.ContainsKey(kv.Key))
+                        valorRight += kv.Value * _tabblk[kv.Key].DirInicial;
+
+                int valor;
                 if (op == '*')
-                    valor = left.Valor * right.Valor;
+                    valor = valorLeft * valorRight;
                 else
                 {
-                    if (right.Valor == 0)
-                        return Error("División entre cero");
-
-                    valor = left.Valor / right.Valor;
+                    if (valorRight == 0) return Error("División entre cero");
+                    valor = valorLeft / valorRight;
                 }
 
-                left = Ok(valor, false);
+                left = Ok(valor, false); // BloquesRelativos ya consumidos, resultado absoluto
             }
 
             return left;
         }
 
-        
         private ResultadoEvaluacion ParseFactor()
         {
             if (_pos >= _expr.Length)
@@ -240,11 +242,6 @@ namespace ProyectoSoftwareSistemas
                 var s = _tabSim[token];
 
                 int valor = s.Direccion;
-
-                if (s.EsRelativo)
-                {
-                    valor += _tabblk[s.Bloque].DirInicial;
-                }
 
                 return Ok(valor, s.EsRelativo, s.Bloque);
             }

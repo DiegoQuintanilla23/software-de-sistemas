@@ -119,7 +119,7 @@ namespace ProyectoSoftwareSistemas
                     generadorCodigoObjeto.Generar();
 
                     // --- PASADA 3: Creación de Registros (H, T, M, E) ---
-                    var generadorProgramaObjeto = new GeneradorProgramaObjeto(lineas, tabsim);
+                    var generadorProgramaObjeto = new GeneradorProgramaObjeto(lineas, tabsim, tabblk);
                     List<string> archivoObjeto = generadorProgramaObjeto.Generar();
 
                     // --- SALIDA: Excel con 2 Pestañas ---

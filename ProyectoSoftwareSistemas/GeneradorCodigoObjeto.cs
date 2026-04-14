@@ -282,7 +282,6 @@ namespace ProyectoSoftwareSistemas
             int r1 = 0;
             int r2 = 0;
 
-            // Validar r1
             if (registros.Length >= 1 && _registros.ContainsKey(registros[0].Trim()))
             {
                 r1 = _registros[registros[0].Trim()];
@@ -293,17 +292,30 @@ namespace ProyectoSoftwareSistemas
                 return;
             }
 
-            // Validar r2 si existe
             if (registros.Length == 2)
             {
-                if (_registros.ContainsKey(registros[1].Trim()))
+                string op2 = registros[1].Trim();
+
+                if (linea.CodigoOp == "SHIFTL" || linea.CodigoOp == "SHIFTR")
                 {
-                    r2 = _registros[registros[1].Trim()];
+                    if (!int.TryParse(op2, out r2))
+                    {
+                        AgregarError(linea, "Error: Segundo operando debe ser numérico");
+                        return;
+                    }
+                    r2 = (r2 - 1) & 0xF; // ← FIX: SIC/XE almacena n-1
                 }
                 else
                 {
-                    AgregarError(linea, "Error: Registro inválido en segundo operando");
-                    return;
+                    if (_registros.ContainsKey(op2))
+                    {
+                        r2 = _registros[op2];
+                    }
+                    else
+                    {
+                        AgregarError(linea, "Error: Registro inválido en segundo operando");
+                        return;
+                    }
                 }
             }
             else if (registros.Length > 2)
@@ -313,75 +325,68 @@ namespace ProyectoSoftwareSistemas
             }
 
             string byte2 = r1.ToString("X") + r2.ToString("X");
-
             linea.CodigoObjeto = opcode + byte2;
+        }
+
+        private int ObtenerCpAbsoluto(LineaIntermedia linea)
+        {
+            int cpRelativo = Convert.ToInt32(linea.ContadorPrograma, 16);
+
+            // Buscar el bloque por NumeroBloque
+            var bloque = _tabblk.Values.FirstOrDefault(b => b.Numero == linea.NumeroBloque);
+            int dirInicial = bloque != null ? bloque.DirInicial : 0;
+
+            return cpRelativo + dirInicial;
         }
 
         private void GenerarFormato3(LineaIntermedia linea)
         {
             string codop = linea.CodigoOp;
 
-            // Caso especial RSUB
             if (codop == "RSUB")
             {
                 linea.CodigoObjeto = "4F0000";
                 return;
             }
 
-            string opcodeHex = _opcodes[codop];
-            int opcode = Convert.ToInt32(opcodeHex, 16);
-
-            // limpiar últimos 2 bits
-            opcode = opcode & 0xFC;
+            int opcode = Convert.ToInt32(_opcodes[codop], 16);
+            opcode &= 0xFC;
 
             string operando = linea.Operador?.Trim().ToUpper() ?? "";
 
-            if (operando.Contains("@") && operando.Contains("#"))
-            {
-                AgregarError(linea, "Error: Modo de direccionamiento inválido");
-            }
-
             int n = 1, i = 1, x = 0, b = 0, p = 0, e = 0;
 
-            // Determinar n/i
             if (operando.StartsWith("#"))
             {
-                n = 0;
-                i = 1;
+                n = 0; i = 1;
                 operando = operando.Substring(1);
             }
             else if (operando.StartsWith("@"))
             {
-                n = 1;
-                i = 0;
+                n = 1; i = 0;
                 operando = operando.Substring(1);
             }
 
-            // Determinar x
             if (operando.Contains(",X"))
             {
                 x = 1;
                 operando = operando.Replace(",X", "");
             }
 
-            // Agregar n/i al opcode
-            opcode = opcode | (n << 1) | i;
+            opcode |= (n << 1) | i;
 
-            int direccionSimbolo = 0;
+            int cpAbsoluto = ObtenerCpAbsoluto(linea); // ← FIX
 
-            //  Evaluar expresión
-            var lineaEval = new LineaIntermedia { Operador = operando };
-            var resultado = _evaluador.Evaluar(lineaEval, Convert.ToInt32(linea.ContadorPrograma, 16));
+            var res = _evaluador.Evaluar(
+                new LineaIntermedia { Operador = operando },
+                cpAbsoluto // ← FIX
+            );
 
-            // - Error en evaluación
-            if (resultado.Error)
+            if (res.Error)
             {
-                AgregarError(linea, resultado.MensajeError);
+                AgregarError(linea, res.MensajeError);
 
-                b = 1;
-                p = 1;
-
-                int flagsError = (x << 3) | (b << 2) | (p << 1) | e;
+                int flagsError = (x << 3) | (1 << 2) | (1 << 1) | e;
 
                 int codigoError =
                     (opcode << 16) |
@@ -392,317 +397,179 @@ namespace ProyectoSoftwareSistemas
                 return;
             }
 
-            //  CASO 1: EXPRESIÓN ABSOLUTA
-            if (!resultado.EsRelativo)
+            // ← FIX: solo importa RelCount neto, no cuántos bloques participaron
+            bool esDireccionValida =
+                res.RelCount == 1 ||
+                (res.RelCount == 0 && res.BloquesRelativos.Values.All(v => v == 0));
+
+            if (!esDireccionValida)
             {
-                int valor = resultado.Valor;
-
-                //  CASO INMEDIATO (#)
-                if (n == 0 && i == 1)
-                {
-                    // rango válido 12 bits (0 a 4095)
-                    if (valor < 0 || valor > 4095)
-                    {
-                        AgregarError(linea, "Error: Constante fuera de rango");
-
-                        b = 1;
-                        p = 1;
-
-                        int flagsError = (x << 3) | (b << 2) | (p << 1) | e;
-
-                        int codigoError =
-                            (opcode << 16) |
-                            (flagsError << 12) |
-                            0xFFF;
-
-                        linea.CodigoObjeto = codigoError.ToString("X6");
-                        return;
-                    }
-
-                    direccionSimbolo = valor;
-                    p = 0;
-                    b = 0;
-                }
-                else
-                {
-                    // caso normal absoluto (raro en formato 3)
-                    direccionSimbolo = valor;
-                    p = 0;
-                    b = 0;
-                }
+                AgregarError(linea, "Expresión no válida como dirección");
+                linea.CodigoObjeto = ((opcode << 16) | (0x3 << 12) | 0xFFF).ToString("X6");
+                return;
             }
-            //  CASO 2: EXPRESIÓN RELATIVA
-            else
+
+            int direccion = res.Valor;
+
+            foreach (var kv in res.BloquesRelativos)
             {
-                int direccion = resultado.Valor;
-                // ajustar por bloque si aplica
-                if (resultado.EsRelativo)
+                if (_tabblk.ContainsKey(kv.Key))
+                    direccion += kv.Value * _tabblk[kv.Key].DirInicial;
+            }
+
+            int disp = 0;
+
+            if (n == 0 && i == 1 && res.RelCount == 0)
+            {
+                // Inmediato absoluto
+                if (direccion < 0 || direccion > 0xFFF)
                 {
-                    // obtener símbolo base de la expresión si es simple
-                    if (_tabSim.ContainsKey(operando))
-                    {
-                        var simbolo = _tabSim[operando];
-                        direccion += _tabblk[simbolo.Bloque].DirInicial;
-                    }
+                    AgregarError(linea, "Constante fuera de rango");
+                    linea.CodigoObjeto = ((opcode << 16) | (0x3 << 12) | 0xFFF).ToString("X6");
+                    return;
                 }
+                disp = direccion;
+            }
+            else if (res.RelCount == 1)
+            {
+                int pc = cpAbsoluto + 3; // ← FIX
+                int delta = direccion - pc;
 
-                int pc = Convert.ToInt32(linea.ContadorPrograma, 16) + 3;
-                int disp = direccion - pc;
-
-                //- PC-relative
-                if (disp >= -2048 && disp <= 2047)
+                if (delta >= -2048 && delta <= 2047)
                 {
                     p = 1;
-                    direccionSimbolo = disp & 0xFFF;
+                    disp = delta & 0xFFF;
                 }
-                //- BASE-relative
                 else if (_baseAddress.HasValue)
                 {
-                    int dispBase = direccion - _baseAddress.Value;
+                    int baseDisp = direccion - _baseAddress.Value;
 
-                    if (dispBase >= 0 && dispBase <= 4095)
+                    if (baseDisp >= 0 && baseDisp <= 4095)
                     {
                         b = 1;
-                        direccionSimbolo = dispBase & 0xFFF;
+                        disp = baseDisp;
                     }
                     else
                     {
-                        AgregarError(linea, "Error: Operando fuera de rango");
-
-                        b = 1;
-                        p = 1;
-
-                        int flagsError = (x << 3) | (b << 2) | (p << 1) | e;
-
-                        int codigoError =
-                            (opcode << 16) |
-                            (flagsError << 12) |
-                            0xFFF;
-
-                        linea.CodigoObjeto = codigoError.ToString("X6");
+                        AgregarError(linea, "Fuera de rango");
+                        linea.CodigoObjeto = ((opcode << 16) | (0x3 << 12) | 0xFFF).ToString("X6");
                         return;
                     }
                 }
                 else
                 {
-                    AgregarError(linea, "Error: No es relativo a PC ni a BASE");
-
-                    b = 1;
-                    p = 1;
-
-                    int flagsError = (x << 3) | (b << 2) | (p << 1) | e;
-
-                    int codigoError =
-                        (opcode << 16) |
-                        (flagsError << 12) |
-                        0xFFF;
-
-                    linea.CodigoObjeto = codigoError.ToString("X6");
+                    AgregarError(linea, "No relativo");
+                    linea.CodigoObjeto = ((opcode << 16) | (0x3 << 12) | 0xFFF).ToString("X6");
                     return;
                 }
+            }
+            else
+            {
+                // Absoluto directo
+                if (direccion < 0 || direccion > 0xFFF)
+                {
+                    AgregarError(linea, "Fuera de rango");
+                    linea.CodigoObjeto = ((opcode << 16) | (0x3 << 12) | 0xFFF).ToString("X6");
+                    return;
+                }
+                disp = direccion;
             }
 
             int flags = (x << 3) | (b << 2) | (p << 1) | e;
 
-            int codigoFinal =
+            int codigo =
                 (opcode << 16) |
                 (flags << 12) |
-                (direccionSimbolo & 0xFFF);
+                (disp & 0xFFF);
 
-            linea.CodigoObjeto = codigoFinal.ToString("X6");
+            linea.CodigoObjeto = codigo.ToString("X6");
         }
+
         private void GenerarFormato4(LineaIntermedia linea)
         {
-            string codop = linea.CodigoOp.Substring(1); // quitar '+'
-            string opcodeHex = _opcodes[codop];
-            int opcode = Convert.ToInt32(opcodeHex, 16);
+            string codop = linea.CodigoOp.Substring(1);
+            int opcode = Convert.ToInt32(_opcodes[codop], 16);
+            opcode &= 0xFC;
 
-            // limpiar últimos 2 bits
-            opcode = opcode & 0xFC;
+            string operando = linea.Operador?.Trim().ToUpper() ?? "";
 
-            string operando = linea.Operador?.Trim() ?? "";
-            operando = operando.Replace(" ", "");
+            int n = 1, i = 1, x = 0, b = 0, p = 0, e = 1;
 
-            int n = 1, i = 1, x = 0, b = 0, p = 0, e = 1; // e SIEMPRE 1
-
-            // Validación modo inválido
-            if (operando.Contains("@") && operando.Contains("#"))
-            {
-                AgregarError(linea, "Modo de direccionamiento inválido");
-
-                b = 1;
-                p = 1;
-
-                int flagsError = (x << 3) | (b << 2) | (p << 1) | e;
-
-                int codigoError =
-                    (opcode << 24) |
-                    (flagsError << 20) |
-                    0xFFFFF; // -1 en 20 bits
-
-                linea.CodigoObjeto = codigoError.ToString("X8");
-                return;
-            }
-
-            // Determinar n/i
             if (operando.StartsWith("#"))
             {
-                n = 0;
-                i = 1;
+                n = 0; i = 1;
                 operando = operando.Substring(1);
             }
             else if (operando.StartsWith("@"))
             {
-                n = 1;
-                i = 0;
+                n = 1; i = 0;
                 operando = operando.Substring(1);
             }
 
-            // Determinar x
             if (operando.Contains(",X"))
             {
                 x = 1;
                 operando = operando.Replace(",X", "");
             }
 
-            if (EsSalto(codop) && x == 1)
+            opcode |= (n << 1) | i;
+
+            int cpAbsoluto = ObtenerCpAbsoluto(linea); // ← FIX
+
+            var res = _evaluador.Evaluar(
+                new LineaIntermedia { Operador = operando },
+                cpAbsoluto // ← FIX
+            );
+
+            if (res.Error)
             {
-                AgregarError(linea, "Error: no existe combinación MD");
-
-                opcode = (opcode & 0xFC) | (n << 1) | i;
-                b = 1;
-                p = 1;
-
-                int flagsError = (x << 3) | (b << 2) | (p << 1) | e;
-
-                int codigoError =
-                    (opcode << 24) |
-                    (flagsError << 20) |
-                    0xFFFFF;
-
-                linea.CodigoObjeto = codigoError.ToString("X8");
+                AgregarError(linea, res.MensajeError);
+                linea.CodigoObjeto = ((opcode << 24) | (0x3 << 20) | 0xFFFFF).ToString("X8");
                 return;
             }
 
-            opcode = opcode | (n << 1) | i;
+            // ← FIX: solo importa RelCount neto
+            bool esDireccionValida =
+                res.RelCount == 1 ||
+                (res.RelCount == 0 && res.BloquesRelativos.Values.All(v => v == 0));
 
-            int direccion = 0;
-
-            // Inmediato numérico
-            if (int.TryParse(operando, out int valorInmediato))
+            if (!esDireccionValida)
             {
-                direccion = valorInmediato;
-
-                if (direccion < 0 || direccion > 0xFFFFF)
-                {
-                    AgregarError(linea, "Operando fuera de rango");
-
-                    b = 1;
-                    p = 1;
-
-                    int flagsError = (x << 3) | (b << 2) | (p << 1) | e;
-
-                    int codigoError =
-                        (opcode << 24) |
-                        (flagsError << 20) |
-                        0xFFFFF;
-
-                    linea.CodigoObjeto = codigoError.ToString("X8");
-                    return;
-                }
+                AgregarError(linea, "Expresión no válida como dirección");
+                linea.CodigoObjeto = ((opcode << 24) | (0x3 << 20) | 0xFFFFF).ToString("X8");
+                return;
             }
-            else if (operando.EndsWith("H"))
+
+            int direccion = res.Valor;
+
+            foreach (var kv in res.BloquesRelativos)
             {
-                try
-                {
-                    string hex = operando.Substring(0, operando.Length - 1);
-                    direccion = Convert.ToInt32(hex, 16);
-
-                    if (direccion < 0 || direccion > 0xFFFFF)
-                    {
-                        AgregarError(linea, "Operando fuera de rango");
-
-                        b = 1;
-                        p = 1;
-
-                        int flagsError = (x << 3) | (b << 2) | (p << 1) | e;
-
-                        int codigoError =
-                            (opcode << 24) |
-                            (flagsError << 20) |
-                            0xFFFFF;
-
-                        linea.CodigoObjeto = codigoError.ToString("X8");
-                        return;
-                    }
-                }
-                catch
-                {
-                    AgregarError(linea, "Número hexadecimal inválido");
-                    return;
-                }
+                if (_tabblk.ContainsKey(kv.Key))
+                    direccion += kv.Value * _tabblk[kv.Key].DirInicial;
             }
-            else
+
+            if (direccion < 0 || direccion > 0xFFFFF)
             {
-                if (!_tabSim.ContainsKey(operando))
-                {
-                    AgregarError(linea, "Símbolo no encontrado");
-
-                    b = 1;
-                    p = 1;
-
-                    int flagsError = (x << 3) | (b << 2) | (p << 1) | e;
-
-                    int codigoError =
-                        (opcode << 24) |
-                        (flagsError << 20) |
-                        0xFFFFF;
-
-                    linea.CodigoObjeto = codigoError.ToString("X8");
-                    return;
-                }
-
-                var simbolo = _tabSim[operando];
-
-                // inmediato (#)
-                if (n == 0 && i == 1)
-                {
-                    if (simbolo.EsRelativo)
-                    {
-                        direccion = simbolo.Direccion + _tabblk[simbolo.Bloque].DirInicial;
-                    }
-                    else
-                    {
-                        direccion = simbolo.Direccion;
-                    }
-                }
-                else
-                {
-                    direccion = simbolo.Direccion + _tabblk[simbolo.Bloque].DirInicial;
-                }
+                AgregarError(linea, "Fuera de rango");
+                linea.CodigoObjeto = ((opcode << 24) | (0x3 << 20) | 0xFFFFF).ToString("X8");
+                return;
             }
 
             int flags = (x << 3) | (b << 2) | (p << 1) | e;
 
-            int codigoFinal =
+            int codigo =
                 (opcode << 24) |
                 (flags << 20) |
                 (direccion & 0xFFFFF);
 
-            string objeto = codigoFinal.ToString("X8");
+            string obj = codigo.ToString("X8");
 
-            // Detectar relocación
-            bool esNumero = int.TryParse(operando, out _);
+            if (res.RelCount == 1)
+                obj += "*";
 
-            if (!esNumero &&
-                _tabSim.ContainsKey(operando))
-            {
-                objeto += "*";
-            }
-
-            linea.CodigoObjeto = objeto;
+            linea.CodigoObjeto = obj;
         }
-
+        
         private void AgregarError(LineaIntermedia linea, string mensaje)
         {
             if (string.IsNullOrWhiteSpace(linea.Errores))
@@ -727,6 +594,22 @@ namespace ProyectoSoftwareSistemas
                 if (linea.CodigoOp == "NOBASE")
                 {
                     _baseAddress = null;
+                    linea.CodigoObjeto = "----";
+                    continue;
+                }
+
+                if (linea.CodigoOp == "END")
+                {
+                    if (!string.IsNullOrWhiteSpace(linea.Operador))
+                    {
+                        string simbolo = linea.Operador.Trim().ToUpper();
+
+                        if (!_tabSim.ContainsKey(simbolo))
+                        {
+                            AgregarError(linea, $"Símbolo no definido: {simbolo}");
+                        }
+                    }
+
                     linea.CodigoObjeto = "----";
                     continue;
                 }
