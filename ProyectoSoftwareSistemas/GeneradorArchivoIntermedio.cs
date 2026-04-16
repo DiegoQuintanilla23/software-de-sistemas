@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection.Emit;
@@ -15,6 +16,7 @@ namespace ProyectoSoftwareSistemas
     public class LineaIntermedia
     {
         public int NumeroLinea { get; set; }
+        public int NumeroBloque { get; set; }
         public string ContadorPrograma { get; set; } = "";
         public string Etiqueta { get; set; } = "";
         public string CodigoOp { get; set; } = "";
@@ -28,10 +30,22 @@ namespace ProyectoSoftwareSistemas
     {
         private SICXEParser.ProgramContext _root;
         private Dictionary<string, Simbolo> TABSIM = new Dictionary<string, Simbolo>();
+        private Dictionary<string, Bloque> TABBLK = new Dictionary<string, Bloque>();
+        private Bloque bloqueActual;
+        private int contadorBloques = 0;
 
         public GeneradorArchivoIntermedio(SICXEParser.ProgramContext root)
         {
             _root = root;
+
+            TABBLK["DEFAULT"] = new Bloque
+            {
+                Numero = 0,
+                Nombre = "DEFAULT",
+                Locctr = 0
+            };
+
+            bloqueActual = TABBLK["DEFAULT"];
         }
 
         private bool EsSalto(string opcode)
@@ -43,20 +57,23 @@ namespace ProyectoSoftwareSistemas
         public List<LineaIntermedia> GenerarLineas()
         {
             var lista = new List<LineaIntermedia>();
-            int contadorPrograma = 0;
+            //int contadorPrograma = 0;
             Stack<int> pilaORG = new Stack<int>();
-            var evaluador = new EvaluadorExpresiones(TABSIM);
+            var evaluador = new EvaluadorExpresiones(TABSIM, TABBLK);
 
             foreach (var linea in _root.line())
             {
                 var nueva = new LineaIntermedia();
+                int locctrAntes = bloqueActual.Locctr;
+                //nueva.NumeroBloque = 0;
                 if (linea.statement() == null)
                 {
                     nueva.Errores = "Error de sintaxis";
                     lista.Add(nueva);
                     continue;
                 }
-                nueva.ContadorPrograma = contadorPrograma.ToString("X4");
+                nueva.ContadorPrograma = locctrAntes.ToString("X4");
+                nueva.NumeroBloque = bloqueActual.Numero;
 
                 nueva.NumeroLinea = linea.Start.Line;
 
@@ -95,7 +112,7 @@ namespace ProyectoSoftwareSistemas
                         nueva.Formato = "4";
 
                         if (!hayErrorSintactico)
-                            contadorPrograma += 4;
+                            bloqueActual.Locctr += 4;
 
                         if (stmt.extendedInstr().f3().f3Operands() != null)
                         {
@@ -119,7 +136,7 @@ namespace ProyectoSoftwareSistemas
                         nueva.CodigoOp = stmt.instruction().f3().OPCODE_F3().GetText();
                         nueva.Formato = "3";
                         if (!hayErrorSintactico)
-                            contadorPrograma += 3;
+                            bloqueActual.Locctr += 3;
 
                         if (stmt.instruction().f3().f3Operands() != null)
                         {
@@ -202,7 +219,7 @@ namespace ProyectoSoftwareSistemas
                         }
 
                         if (!hayErrorSintactico)
-                            contadorPrograma += 2;
+                            bloqueActual.Locctr += 2;
                     }
                     // FORMATO 1
                     else if (stmt.instruction()?.f1() != null)
@@ -230,7 +247,7 @@ namespace ProyectoSoftwareSistemas
                         }
 
                         if (!hayErrorSintactico)
-                            contadorPrograma += 1;
+                            bloqueActual.Locctr += 1;
                     }
                     // DIRECTIVAS
                     else if (stmt.directive() != null)
@@ -247,15 +264,15 @@ namespace ProyectoSoftwareSistemas
                         {
                             if (int.TryParse(nueva.Operador, System.Globalization.NumberStyles.HexNumber, null, out int inicio))
                             {
-                                contadorPrograma = inicio;
-                                nueva.ContadorPrograma = contadorPrograma.ToString("X4");
+                                bloqueActual.Locctr = inicio;
+                                nueva.ContadorPrograma = locctrAntes.ToString("X4");
                             }
                         }
 
                         else if (nueva.CodigoOp == "WORD")
                         {
                             if (!hayErrorSintactico)
-                                contadorPrograma += 3;
+                                bloqueActual.Locctr += 3;
                         }
 
                         else if (nueva.CodigoOp == "RESB")
@@ -263,7 +280,7 @@ namespace ProyectoSoftwareSistemas
                             if (TryParseNumero(nueva.Operador, out int valor))
                             {
                                 if (!hayErrorSintactico)
-                                    contadorPrograma += valor;
+                                    bloqueActual.Locctr += valor;
                             }
                             else
                             {
@@ -278,7 +295,7 @@ namespace ProyectoSoftwareSistemas
                             if (TryParseNumero(nueva.Operador, out int valor))
                             {
                                 if (!hayErrorSintactico)
-                                    contadorPrograma += valor * 3;
+                                    bloqueActual.Locctr += valor * 3;
                             }
                             else
                             {
@@ -297,7 +314,7 @@ namespace ProyectoSoftwareSistemas
                                 int longitud = op.Length - 3;
 
                                 if (!hayErrorSintactico)
-                                    contadorPrograma += longitud;
+                                    bloqueActual.Locctr += longitud;
                             }
                             else if (op.StartsWith("X'") && op.EndsWith("'"))
                             {
@@ -319,7 +336,7 @@ namespace ProyectoSoftwareSistemas
                                 }
 
                                 if (!hayErrorSintactico)
-                                    contadorPrograma += contenido.Length / 2;
+                                    bloqueActual.Locctr += contenido.Length / 2;
                             }
                             else
                             {
@@ -338,9 +355,30 @@ namespace ProyectoSoftwareSistemas
                             }
                             else
                             {
-                                var res = evaluador.Evaluar(nueva, contadorPrograma);
+                                var res = evaluador.Evaluar(nueva, bloqueActual.Locctr);
 
-                                if (res.Error)
+                                // VALIDAR BLOQUES SOLO EN EQU
+                                var (bloques, hayRel, hayAbs) = ObtenerInfoExpresion(nueva.Operador);
+
+                                // 1. Diferentes bloques
+                                if (bloques.Count > 1)
+                                {
+                                    nueva.Errores = "Error: Símbolos de diferentes bloques en EQU";
+                                    hayErrorSemantico = true;
+                                }
+
+                                // 2. Mezcla inválida (según tu práctica)
+                                if (hayRel && hayAbs)
+                                {
+                                    if (string.IsNullOrEmpty(nueva.Errores))
+                                        nueva.Errores = "Error: Símbolos de diferentes bloques en EQU";
+                                    else
+                                        nueva.Errores += " | Error: Símbolos de diferentes bloques en EQU";
+
+                                    hayErrorSemantico = true;
+                                }
+
+                                if (res.Error || hayErrorSemantico)
                                 {
                                     // Acumular error
                                     if (string.IsNullOrEmpty(nueva.Errores))
@@ -357,7 +395,7 @@ namespace ProyectoSoftwareSistemas
                                         Direccion = 0xFFFF,
                                         Tipo = "A",
                                         EsRelativo = false,
-                                        Bloque = "DEFAULT"
+                                        Bloque = bloqueActual.Nombre
                                     };
                                 }
                                 else
@@ -368,7 +406,7 @@ namespace ProyectoSoftwareSistemas
                                         Direccion = res.Valor,
                                         Tipo = res.Tipo,
                                         EsRelativo = res.EsRelativo,
-                                        Bloque = "DEFAULT"
+                                        Bloque = bloqueActual.Nombre
                                     };
                                 }
 
@@ -382,8 +420,8 @@ namespace ProyectoSoftwareSistemas
                             {
                                 if (pilaORG.Count > 0)
                                 {
-                                    contadorPrograma = pilaORG.Pop();
-                                    nueva.ContadorPrograma = contadorPrograma.ToString("X4");
+                                    bloqueActual.Locctr = pilaORG.Pop();
+                                    nueva.ContadorPrograma = locctrAntes.ToString("X4");
                                 }
                                 else
                                 {
@@ -397,7 +435,7 @@ namespace ProyectoSoftwareSistemas
                             }
                             else
                             {
-                                var res = evaluador.Evaluar(nueva, contadorPrograma);
+                                var res = evaluador.Evaluar(nueva, bloqueActual.Locctr);
 
                                 if (res.Error)
                                 {
@@ -411,12 +449,47 @@ namespace ProyectoSoftwareSistemas
                                 else
                                 {
                                     // Guardar PC actual
-                                    pilaORG.Push(contadorPrograma);
+                                    pilaORG.Push(bloqueActual.Locctr);
 
-                                    contadorPrograma = res.Valor;
-                                    nueva.ContadorPrograma = contadorPrograma.ToString("X4");
+                                    bloqueActual.Locctr = res.Valor;
+                                    nueva.ContadorPrograma = locctrAntes.ToString("X4");
                                 }
                             }
+
+                            insertarEnTabSim = false;
+                        }
+                        else if (nueva.CodigoOp == "USE")
+                        {
+                            string nombre = string.IsNullOrWhiteSpace(nueva.Operador) ? "DEFAULT" : nueva.Operador;
+
+                            if (!TABBLK.ContainsKey(nombre))
+                            {
+                                TABBLK[nombre] = new Bloque
+                                {
+                                    Numero = ++contadorBloques,
+                                    Nombre = nombre,
+                                    Locctr = 0
+                                };
+                            }
+
+                            bloqueActual = TABBLK[nombre];
+
+                            // actualizar valores de la línea DESPUÉS del cambio de bloque
+                            nueva.NumeroBloque = bloqueActual.Numero;
+                            nueva.ContadorPrograma = bloqueActual.Locctr.ToString("X4");
+
+                            insertarEnTabSim = false;
+                        }
+                        else if (nueva.CodigoOp == "END")
+                        {
+                            // Forzar que END esté en el bloque 0 (DEFAULT)
+                            if (TABBLK.ContainsKey("DEFAULT"))
+                            {
+                                bloqueActual = TABBLK["DEFAULT"];
+                            }
+
+                            nueva.NumeroBloque = bloqueActual.Numero;
+                            nueva.ContadorPrograma = bloqueActual.Locctr.ToString("X4");
 
                             insertarEnTabSim = false;
                         }
@@ -435,18 +508,84 @@ namespace ProyectoSoftwareSistemas
                     TABSIM[nueva.Etiqueta] = new Simbolo
                     {
                         Nombre = nueva.Etiqueta,
-                        Direccion = Convert.ToInt32(nueva.ContadorPrograma, 16),
+                        Direccion = locctrAntes,
                         Tipo = "R",
                         EsRelativo = true,
-                        Bloque = "DEFAULT"
+                        Bloque = bloqueActual.Nombre
                     };
                 }
 
                 lista.Add(nueva);
             }
 
+            int dir = 0;
+
+            foreach (var b in TABBLK.Values.OrderBy(x => x.Numero))
+            {
+                b.Longitud = b.Locctr;
+                b.DirInicial = dir;
+                dir += b.Longitud;
+            }
+
             return lista;
         }
+
+        private (HashSet<string> bloques, bool hayRel, bool hayAbs) ObtenerInfoExpresion(string expr)
+        {
+            var bloques = new HashSet<string>();
+            bool hayRel = false;
+            bool hayAbs = false;
+
+            if (string.IsNullOrWhiteSpace(expr))
+                return (bloques, hayRel, hayAbs);
+
+            expr = expr.ToUpper().Replace(" ", "");
+
+            var tokens = System.Text.RegularExpressions.Regex.Split(expr, @"[^A-Z0-9]+");
+
+            foreach (var token in tokens)
+            {
+                if (string.IsNullOrEmpty(token))
+                    continue;
+
+                if (int.TryParse(token, out _))
+                {
+                    hayAbs = true;
+                    continue;
+                }
+
+                if (token.EndsWith("H"))
+                {
+                    hayAbs = true;
+                    continue;
+                }
+
+                if (token == "*")
+                {
+                    hayRel = true;
+                    bloques.Add(bloqueActual.Nombre);
+                    continue;
+                }
+
+                if (TABSIM.ContainsKey(token))
+                {
+                    var s = TABSIM[token];
+
+                    if (s.EsRelativo)
+                    {
+                        hayRel = true;
+                        bloques.Add(s.Bloque);
+                    }
+                    else
+                    {
+                        hayAbs = true;
+                    }
+                }
+            }
+
+            return (bloques, hayRel, hayAbs);
+        }
+
 
         private bool TryParseNumero(string texto, out int valor)
         {
@@ -483,29 +622,31 @@ namespace ProyectoSoftwareSistemas
             var workbook = new XLWorkbook();
             var worksheet = workbook.Worksheets.Add("ArchivoIntermedio");
 
-            worksheet.Cell(1, 1).Value = "Numero de Linea";
-            worksheet.Cell(1, 2).Value = "Contador de Programa";
-            worksheet.Cell(1, 3).Value = "Etiqueta";
-            worksheet.Cell(1, 4).Value = "CodigoOp";
-            worksheet.Cell(1, 5).Value = "Operador";
-            worksheet.Cell(1, 6).Value = "Formato de Instruccion";
-            worksheet.Cell(1, 7).Value = "Modo de Direccionamiento";
-            worksheet.Cell(1, 8).Value = "Errores";
-            worksheet.Cell(1, 9).Value = "Codigo Objeto";
+            worksheet.Cell(1, 1).Value = "Num. Linea";
+            worksheet.Cell(1, 2).Value = "Num. Bloque";
+            worksheet.Cell(1, 3).Value = "P.C.";
+            worksheet.Cell(1, 4).Value = "Etiq.";
+            worksheet.Cell(1, 5).Value = "CodOp";
+            worksheet.Cell(1, 6).Value = "Op";
+            worksheet.Cell(1, 7).Value = "Frmt. Inst";
+            worksheet.Cell(1, 8).Value = "M.D.";
+            worksheet.Cell(1, 9).Value = "Errores";
+            worksheet.Cell(1, 10).Value = "C.O.";
 
             int fila = 2;
 
             foreach (var l in lineas)
             {
                 worksheet.Cell(fila, 1).Value = l.NumeroLinea;
-                worksheet.Cell(fila, 2).Value = l.ContadorPrograma;
-                worksheet.Cell(fila, 3).Value = l.Etiqueta;
-                worksheet.Cell(fila, 4).Value = l.CodigoOp;
-                worksheet.Cell(fila, 5).Value = l.Operador;
-                worksheet.Cell(fila, 6).Value = l.Formato;
-                worksheet.Cell(fila, 7).Value = l.ModoDireccionamiento;
-                worksheet.Cell(fila, 8).Value = l.Errores;
-                worksheet.Cell(fila, 9).Value = l.CodigoObjeto;
+                worksheet.Cell(fila, 2).Value = l.NumeroBloque;
+                worksheet.Cell(fila, 3).Value = l.ContadorPrograma;
+                worksheet.Cell(fila, 4).Value = l.Etiqueta;
+                worksheet.Cell(fila, 5).Value = l.CodigoOp;
+                worksheet.Cell(fila, 6).Value = l.Operador;
+                worksheet.Cell(fila, 7).Value = l.Formato;
+                worksheet.Cell(fila, 8).Value = l.ModoDireccionamiento;
+                worksheet.Cell(fila, 9).Value = l.Errores;
+                worksheet.Cell(fila, 10).Value = l.CodigoObjeto;
                 fila++;
             }
 
@@ -524,6 +665,49 @@ namespace ProyectoSoftwareSistemas
                 wsObjeto.Column(1).AdjustToContents();
             }
 
+            var wsBloques = workbook.Worksheets.Add("TABBLK");
+
+            wsBloques.Cell(1, 1).Value = "No. Bloque";
+            wsBloques.Cell(1, 2).Value = "Nombre";
+            wsBloques.Cell(1, 3).Value = "Longitud";
+            wsBloques.Cell(1, 4).Value = "Dir Inicial";
+
+            int filaB = 2;
+
+            foreach (var b in TABBLK.Values.OrderBy(x => x.Numero))
+            {
+                wsBloques.Cell(filaB, 1).Value = b.Numero;
+                wsBloques.Cell(filaB, 2).Value = b.Nombre;
+                wsBloques.Cell(filaB, 3).Value = b.Longitud.ToString("X4");
+                wsBloques.Cell(filaB, 4).Value = b.DirInicial.ToString("X4");
+                filaB++;
+            }
+
+            wsBloques.Columns().AdjustToContents();
+
+            // Hoja TABSIM
+            var wsSim = workbook.Worksheets.Add("TABSIM");
+
+            wsSim.Cell(1, 1).Value = "Simbolo";
+            wsSim.Cell(1, 2).Value = "Direccion";
+            wsSim.Cell(1, 3).Value = "Tipo";
+            wsSim.Cell(1, 4).Value = "Relativo";
+            wsSim.Cell(1, 5).Value = "Bloque";
+
+            int filaS = 2;
+
+            foreach (var s in TABSIM.Values)
+            {
+                wsSim.Cell(filaS, 1).Value = s.Nombre;
+                wsSim.Cell(filaS, 2).Value = s.Direccion.ToString("X4");
+                wsSim.Cell(filaS, 3).Value = s.Tipo;
+                wsSim.Cell(filaS, 4).Value = s.EsRelativo ? "Sí" : "No";
+                wsSim.Cell(filaS, 5).Value = s.Bloque;
+                filaS++;
+            }
+
+            wsSim.Columns().AdjustToContents();
+
             string nombreSinExtension = Path.GetFileNameWithoutExtension(nombreArchivo);
             string nuevoNombre = nombreSinExtension + "_ArchivoIntermedio.xlsx";
             string carpetaRaiz = Directory.GetCurrentDirectory();
@@ -531,6 +715,13 @@ namespace ProyectoSoftwareSistemas
             string rutaFinal = Path.Combine(carpetaRaiz, nuevoNombre);
 
             workbook.SaveAs(rutaFinal);
+            var psi = new ProcessStartInfo
+            {
+                FileName = rutaFinal,
+                UseShellExecute = true
+            };
+
+            Process.Start(psi);
         }
 
         private void ProcesarModoDireccionamiento(LineaIntermedia nueva, SICXEParser.F3OperandsContext ops)
@@ -585,6 +776,11 @@ namespace ProyectoSoftwareSistemas
         public Dictionary<string, Simbolo> GetTabSim()
         {
             return this.TABSIM;
+        }
+
+        public Dictionary<string, Bloque> GetTabBlk()
+        {
+            return TABBLK;
         }
     }
 }

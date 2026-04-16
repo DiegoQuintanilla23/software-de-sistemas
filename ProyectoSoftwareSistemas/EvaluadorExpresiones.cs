@@ -6,23 +6,30 @@ namespace ProyectoSoftwareSistemas
     public class ResultadoEvaluacion
     {
         public int Valor { get; set; }
+
+        public int RelCount { get; set; } = 0;
+
         public string Tipo { get; set; } = "A";
-        public bool EsRelativo { get; set; } = false;
+
+        public bool EsRelativo => RelCount == 1;
 
         public bool Error { get; set; } = false;
         public string MensajeError { get; set; } = "";
+        public Dictionary<string, int> BloquesRelativos { get; set; } = new Dictionary<string, int>();
     }
 
     public class EvaluadorExpresiones
     {
         private Dictionary<string, Simbolo> _tabSim;
+        private Dictionary<string, Bloque> _tabblk;
         private string _expr;
         private int _pos;
         private int _cp;
 
-        public EvaluadorExpresiones(Dictionary<string, Simbolo> tabSim)
+        public EvaluadorExpresiones(Dictionary<string, Simbolo> tabSim, Dictionary<string, Bloque> tabblk)
         {
             _tabSim = tabSim;
+            _tabblk = tabblk;
         }
 
         public ResultadoEvaluacion Evaluar(LineaIntermedia linea, int contadorPrograma)
@@ -44,11 +51,16 @@ namespace ProyectoSoftwareSistemas
             if (_pos < _expr.Length)
                 return Error("Error de sintaxis");
 
+            // VALIDACIÓN FINAL DE RELATIVOS
+            if (res.RelCount > 1 || res.RelCount < -1)
+                return Error("Expresión relativa inválida");
+
             res.Tipo = res.EsRelativo ? "R" : "A";
+
             return res;
         }
 
-        
+
         // + -
         private ResultadoEvaluacion ParseExpresion()
         {
@@ -72,26 +84,43 @@ namespace ProyectoSoftwareSistemas
                     ? left.Valor + right.Valor
                     : left.Valor - right.Valor;
 
-                int relA = left.EsRelativo ? 1 : 0;
-                int relB = right.EsRelativo ? 1 : 0;
+                int relA = left.RelCount;
+                int relB = right.RelCount;
 
                 if (op == '-')
                     relB *= -1;
 
                 int suma = relA + relB;
 
-                if (suma == 0)
-                    left = Ok(valor, false);
-                else if (suma == 1)
-                    left = Ok(valor, true);
-                else
-                    return Error("Expresión relativa inválida");
+                var nuevo = new ResultadoEvaluacion
+                {
+                    Valor = valor,
+                    RelCount = suma
+                };
+
+                // combinar bloques
+                foreach (var kv in left.BloquesRelativos)
+                {
+                    nuevo.BloquesRelativos[kv.Key] = kv.Value;
+                }
+
+                foreach (var kv in right.BloquesRelativos)
+                {
+                    int signo = (op == '-') ? -1 : 1;
+
+                    if (!nuevo.BloquesRelativos.ContainsKey(kv.Key))
+                        nuevo.BloquesRelativos[kv.Key] = 0;
+
+                    nuevo.BloquesRelativos[kv.Key] += signo * kv.Value;
+                }
+
+                left = nuevo;
             }
 
             return left;
         }
 
-        
+
         // * /
         private ResultadoEvaluacion ParseTermino()
         {
@@ -100,40 +129,42 @@ namespace ProyectoSoftwareSistemas
             while (_pos < _expr.Length)
             {
                 char op = _expr[_pos];
-
-                if (op != '*' && op != '/')
-                    break;
-
+                if (op != '*' && op != '/') break;
                 _pos++;
 
                 var right = ParseFactor();
-
                 if (left.Error) return left;
                 if (right.Error) return right;
 
-                // - Regla SIC/XE
-                if (left.EsRelativo || right.EsRelativo)
+                if (left.RelCount != 0 || right.RelCount != 0)
                     return Error("Relativos no permitidos en * o /");
 
-                int valor;
+                // ← NUEVO: aplicar ajustes de bloque antes de operar
+                int valorLeft = left.Valor;
+                foreach (var kv in left.BloquesRelativos)
+                    if (_tabblk.ContainsKey(kv.Key))
+                        valorLeft += kv.Value * _tabblk[kv.Key].DirInicial;
 
+                int valorRight = right.Valor;
+                foreach (var kv in right.BloquesRelativos)
+                    if (_tabblk.ContainsKey(kv.Key))
+                        valorRight += kv.Value * _tabblk[kv.Key].DirInicial;
+
+                int valor;
                 if (op == '*')
-                    valor = left.Valor * right.Valor;
+                    valor = valorLeft * valorRight;
                 else
                 {
-                    if (right.Valor == 0)
-                        return Error("División entre cero");
-
-                    valor = left.Valor / right.Valor;
+                    if (valorRight == 0) return Error("División entre cero");
+                    valor = valorLeft / valorRight;
                 }
 
-                left = Ok(valor, false);
+                left = Ok(valor, false); // BloquesRelativos ya consumidos, resultado absoluto
             }
 
             return left;
         }
 
-        
         private ResultadoEvaluacion ParseFactor()
         {
             if (_pos >= _expr.Length)
@@ -193,13 +224,11 @@ namespace ProyectoSoftwareSistemas
             // hexadecimal
             if (token.EndsWith("H"))
             {
-                try
+                string hex = token.Substring(0, token.Length - 1);
+
+                if (System.Text.RegularExpressions.Regex.IsMatch(hex, "^[0-9A-F]+$"))
                 {
-                    return Ok(Convert.ToInt32(token.Replace("H", ""), 16), false);
-                }
-                catch
-                {
-                    return Error("Hex inválido");
+                    return Ok(Convert.ToInt32(hex, 16), false);
                 }
             }
 
@@ -211,21 +240,31 @@ namespace ProyectoSoftwareSistemas
             if (_tabSim.ContainsKey(token))
             {
                 var s = _tabSim[token];
-                return Ok(s.Direccion, s.EsRelativo);
+
+                int valor = s.Direccion;
+
+                return Ok(valor, s.EsRelativo, s.Bloque);
             }
 
             return Error($"Símbolo no definido: {token}");
         }
 
-        
-        private ResultadoEvaluacion Ok(int valor, bool relativo)
+
+        private ResultadoEvaluacion Ok(int valor, bool relativo, string bloque = null)
         {
-            return new ResultadoEvaluacion
+            var res = new ResultadoEvaluacion
             {
                 Valor = valor,
-                EsRelativo = relativo,
+                RelCount = relativo ? 1 : 0,
                 Tipo = relativo ? "R" : "A"
             };
+
+            if (relativo && bloque != null)
+            {
+                res.BloquesRelativos[bloque] = 1;
+            }
+
+            return res;
         }
 
         private ResultadoEvaluacion Error(string msg)
@@ -236,7 +275,7 @@ namespace ProyectoSoftwareSistemas
                 MensajeError = msg,
                 Valor = -1,
                 Tipo = "A",
-                EsRelativo = false
+                RelCount = 0
             };
         }
     }

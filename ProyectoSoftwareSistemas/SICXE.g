@@ -98,7 +98,8 @@ indirectOperand
 /* DIRECTIVAS */
 
 directive
-    : DIRECTIVE expr?
+    : DIRECTIVE expr?        // para todas las demás
+    | 'USE' ID?              // USE con o sin nombre
     ;
 
 /* VALORES */
@@ -189,6 +190,7 @@ OPCODE_F3
 DIRECTIVE
     : 'START' | 'END' | 'WORD' | 'RESW' | 'RESB'
     | 'BYTE' | 'BASE' | 'NOBASE' | 'EQU' | 'ORG'
+    | 'USE'
     ;
 
 /* REGISTROS */
