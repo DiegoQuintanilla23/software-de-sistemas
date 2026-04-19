@@ -83,3 +83,5 @@ C:\Users\vils1\OneDrive\Escritorio\Uni\Semestre 10\FSWS\Laboratorio\software-de-
 C:\Users\vils1\OneDrive\Escritorio\Uni\Semestre 10\FSWS\Laboratorio\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\Proyecto.5B71E502.Up2Date
 C:\Users\vils1\OneDrive\Escritorio\Uni\Semestre 10\FSWS\Laboratorio\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\ProyectoSoftwareSistemas.exe
 C:\Users\vils1\OneDrive\Escritorio\Uni\Semestre 10\FSWS\Laboratorio\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\ProyectoSoftwareSistemas.pdb
+C:\Users\vils1\OneDrive\Escritorio\Uni\Semestre 10\FSWS\Laboratorio\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\ProyectoSoftwareSistemas.csproj.GenerateResource.cache
+C:\Users\vils1\OneDrive\Escritorio\Uni\Semestre 10\FSWS\Laboratorio\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\ProyectoSoftwareSistemas.InterfazSicXE.resources
