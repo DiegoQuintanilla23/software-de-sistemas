@@ -29,6 +29,7 @@ namespace ProyectoSoftwareSistemas
 
         private void nuevoToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // Opcional: Verificar si hay texto antes de borrar
             if (!string.IsNullOrEmpty(txtEditor.Text))
             {
                 DialogResult resultado = MessageBox.Show(
@@ -44,26 +45,23 @@ namespace ProyectoSoftwareSistemas
                 }
             }
 
+            // 1. Limpiar el editor de texto
             txtEditor.Clear();
-            rutaArchivoActual = string.Empty;
-            this.Text = "InterfazSicXE - Nuevo archivo";
 
+            // 2. Reiniciar la ruta del archivo actual
+            rutaArchivoActual = string.Empty;
+
+            // 3. Actualizar el título de la ventana
+            this.Text = "SicXeWorkspace - Nuevo archivo";
+
+            // 4. Limpiar los DataGridViews para que no queden datos del proyecto anterior
             dgvIntermedio.DataSource = null;
             dgvTabsim.DataSource = null;
             dgvBloques.DataSource = null;
             dgvObjeto.DataSource = null;
 
+            // Notificar en la barra de estado si tienes una, o simplemente limpiar el foco
             txtEditor.Focus();
-        }
-
-        private void abrirToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                rutaArchivoActual = openFileDialog1.FileName;
-                txtEditor.Text = File.ReadAllText(rutaArchivoActual);
-                this.Text = $"InterfazSicXE - {Path.GetFileName(rutaArchivoActual)}";
-            }
         }
 
         private void guardarToolStripMenuItem_Click(object sender, EventArgs e)
@@ -227,6 +225,17 @@ namespace ProyectoSoftwareSistemas
                 }
             }
         }
+
+        private void abrirToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                rutaArchivoActual = openFileDialog1.FileName;
+                txtEditor.Text = File.ReadAllText(rutaArchivoActual);
+                this.Text = $"InterfazSicXE - {Path.GetFileName(rutaArchivoActual)}";
+            }
+        }
+
     }
 
     // ====================================================================================
