@@ -20,7 +20,6 @@ namespace ProyectoSoftwareSistemas
 
         private void ConfigurarDialogos()
         {
-            // Asumiendo que arrastraste openFileDialog1 y saveFileDialog1 al formulario
             openFileDialog1.Filter = "Archivos de ensamblador (*.asm, *.txt)|*.asm;*.txt|Todos los archivos (*.*)|*.*";
             saveFileDialog1.Filter = "Archivos de ensamblador (*.asm, *.txt)|*.asm;*.txt";
         }
@@ -29,7 +28,7 @@ namespace ProyectoSoftwareSistemas
 
         private void nuevoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Opcional: Verificar si hay texto antes de borrar
+            //Verificar si hay texto antes de borrar
             if (!string.IsNullOrEmpty(txtEditor.Text))
             {
                 DialogResult resultado = MessageBox.Show(
@@ -45,16 +44,16 @@ namespace ProyectoSoftwareSistemas
                 }
             }
 
-            // 1. Limpiar el editor de texto
+            //Limpiar el editor de texto
             txtEditor.Clear();
 
-            // 2. Reiniciar la ruta del archivo actual
+            //Reiniciar la ruta del archivo actual
             rutaArchivoActual = string.Empty;
 
-            // 3. Actualizar el título de la ventana
+            //Actualizar el título de la ventana
             this.Text = "SicXeWorkspace - Nuevo archivo";
 
-            // 4. Limpiar los DataGridViews para que no queden datos del proyecto anterior
+            //Limpiar los DataGridViews para que no queden datos del proyecto anterior
             dgvIntermedio.DataSource = null;
             dgvTabsim.DataSource = null;
             dgvBloques.DataSource = null;

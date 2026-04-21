@@ -4,8 +4,6 @@ using Antlr4.Runtime;
 
 namespace ProyectoSoftwareSistemas
 {
-    // Si tus listeners siguen aquí, el using de Antlr4 es obligatorio.
-
     static class Program
     {
         [STAThread]
