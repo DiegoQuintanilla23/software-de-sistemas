@@ -241,6 +241,17 @@ namespace ProyectoSoftwareSistemas
             {
                 var s = _tabSim[token];
 
+                // símbolo externo
+                if (s.Tipo == "E")
+                {
+                    return new ResultadoEvaluacion
+                    {
+                        Valor = 0,
+                        RelCount = 0,
+                        Tipo = "E" // opcional, pero útil
+                    };
+                }
+
                 int valor = s.Direccion;
 
                 return Ok(valor, s.EsRelativo, s.Bloque);

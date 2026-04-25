@@ -86,3 +86,6 @@ C:\Users\vils1\OneDrive\Escritorio\Uni\Semestre 10\FSWS\Laboratorio\software-de-
 C:\Users\vils1\OneDrive\Escritorio\Uni\Semestre 10\FSWS\Laboratorio\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\ProyectoSoftwareSistemas.csproj.GenerateResource.cache
 C:\Users\vils1\OneDrive\Escritorio\Uni\Semestre 10\FSWS\Laboratorio\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\ProyectoSoftwareSistemas.InterfazSicXE.resources
 C:\Users\vils1\OneDrive\Escritorio\Uni\Semestre 10\FSWS\Laboratorio\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\ProyectoSoftwareSistemas.Properties.Resources.resources
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\ProyectoSoftwareSistemas.InterfazSicXE.resources
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\ProyectoSoftwareSistemas.Properties.Resources.resources
+C:\Users\Diego\Desktop\Fundamentos de software de sistemas\Practicas\software-de-sistemas\ProyectoSoftwareSistemas\obj\Debug\ProyectoSoftwareSistemas.csproj.GenerateResource.cache

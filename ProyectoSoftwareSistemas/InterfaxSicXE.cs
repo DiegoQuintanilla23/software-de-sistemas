@@ -131,8 +131,11 @@ namespace ProyectoSoftwareSistemas
                 // --- PASADA 1: Direcciones y Símbolos ---
                 var generadorIntermedio = new GeneradorArchivoIntermedio(root);
                 List<LineaIntermedia> lineas = generadorIntermedio.GenerarLineas();
-                Dictionary<string, Simbolo> tabsim = generadorIntermedio.GetTabSim();
-                Dictionary<string, Bloque> tabblk = generadorIntermedio.GetTabBlk();
+                // AQUI SE OBTIENEN LAS SECCIONES, QUE CONTIENE CADA UNA SUS PROPIAS TABLAS
+                List<Seccion> secciones = generadorIntermedio.GetSecciones();
+                // SE TOMAN LAS PRIMERAS TABLAS POR AHORA
+                Dictionary<string, Simbolo> tabsim = secciones[0].TABSIM;
+                Dictionary<string, Bloque> tabblk = secciones[0].TABBLK;
 
                 // --- PASADA 2: Código Objeto ---
                 var generadorCodigoObjeto = new GeneradorCodigoObjeto(tabsim, lineas, tabblk);
@@ -143,7 +146,7 @@ namespace ProyectoSoftwareSistemas
                 List<string> archivoObjeto = generadorProgramaObjeto.Generar();
 
                 // 3. Cargar datos en los DataGridViews
-                ActualizarTablas(lineas, tabsim, tabblk, archivoObjeto);
+                // ActualizarTablas(lineas, tabsim, tabblk, archivoObjeto);
 
                 // 4. Generar el Excel (solo si el archivo ya fue guardado y tiene ruta)
                 if (!string.IsNullOrEmpty(rutaArchivoActual))
