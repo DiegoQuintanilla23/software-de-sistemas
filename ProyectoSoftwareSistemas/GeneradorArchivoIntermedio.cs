@@ -26,6 +26,7 @@ namespace ProyectoSoftwareSistemas
         public string Errores { get; set; } = "";
         public string CodigoObjeto { get; set; } = "";
     }
+
     public class GeneradorArchivoIntermedio
     {
         private SICXEParser.ProgramContext _root;
@@ -52,6 +53,26 @@ namespace ProyectoSoftwareSistemas
         {
             return opcode == "J" || opcode == "JEQ" || opcode == "JGT"
                 || opcode == "JLT" || opcode == "JSUB";
+        }
+
+        string ObtenerCodOp(SICXEParser.StatementContext stmt)
+        {
+            var dir = stmt.directive();
+
+            if (dir != null)
+            {
+                if (dir.DIRECTIVE() != null)
+                    return dir.DIRECTIVE().GetText();
+
+                var text = dir.GetText();
+
+                if (text.StartsWith("EXTDEF")) return "EXTDEF";
+                if (text.StartsWith("EXTREF")) return "EXTREF";
+                if (text.StartsWith("CSECT")) return "CSECT";
+                if (text.StartsWith("USE")) return "USE";
+            }
+
+            return "";
         }
 
         public List<LineaIntermedia> GenerarLineas()
@@ -86,7 +107,9 @@ namespace ProyectoSoftwareSistemas
 
                 if (!string.IsNullOrEmpty(nueva.Etiqueta))
                 {
-                    bool esStart = linea.statement().directive() != null && linea.statement().directive().DIRECTIVE().GetText() == "START";
+                    string codop = ObtenerCodOp(linea.statement());
+
+                    bool esStart = codop == "START";
                     if (TABSIM.ContainsKey(nueva.Etiqueta))
                     {
                         nueva.Errores = "Error: Símbolo duplicado";

@@ -98,8 +98,15 @@ indirectOperand
 /* DIRECTIVAS */
 
 directive
-    : DIRECTIVE expr?        // para todas las demás
-    | 'USE' ID?              // USE con o sin nombre
+    : 'EXTDEF' idList
+    | 'EXTREF' idList
+    | 'CSECT'
+    | DIRECTIVE expr?
+    | 'USE' ID?
+    ;
+
+idList
+    : ID (COMMA ID)*
     ;
 
 /* VALORES */
