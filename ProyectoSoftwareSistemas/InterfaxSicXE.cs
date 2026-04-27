@@ -59,7 +59,6 @@ namespace ProyectoSoftwareSistemas
             dgvBloques.DataSource = null;
             dgvObjeto.DataSource = null;
 
-            // Notificar en la barra de estado si tienes una, o simplemente limpiar el foco
             txtEditor.Focus();
         }
 
@@ -108,7 +107,7 @@ namespace ProyectoSoftwareSistemas
                 dgvBloques.DataSource = null;
                 dgvObjeto.DataSource = null;
 
-                // 1. Configuración de ANTLR
+                //Configuración de ANTLR
                 AntlrInputStream inputStream = new AntlrInputStream(txtEditor.Text);
                 SICXELexer lexer = new SICXELexer(inputStream);
 
@@ -124,7 +123,7 @@ namespace ProyectoSoftwareSistemas
                 parser.AddErrorListener(parserErrorListener);
                 parser.BuildParseTree = true;
 
-                // 2. Generación del árbol sintáctico
+                //Generación del árbol sintáctico
                 IParseTree tree = parser.program();
                 var root = tree as SICXEParser.ProgramContext;
 
@@ -147,14 +146,16 @@ namespace ProyectoSoftwareSistemas
 
                 // 3. Cargar datos en los DataGridViews
                 // ActualizarTablas(lineas, tabsim, tabblk, archivoObjeto);
+                //Cargar datos en los DataGridViews
+                ActualizarTablas(lineas, secciones, archivoObjeto);
 
-                // 4. Generar el Excel (solo si el archivo ya fue guardado y tiene ruta)
+                //Generar el Excel (solo si el archivo ya fue guardado y tiene ruta)
                 if (!string.IsNullOrEmpty(rutaArchivoActual))
                 {
                     generadorIntermedio.GenerarExcel(lineas, archivoObjeto, Path.GetFileName(rutaArchivoActual));
                 }
 
-                // 5. Gestión de Errores de ANTLR
+                //Gestión de Errores de ANTLR
                 var todosLosErrores = lexerErrorListener.Errores.Concat(parserErrorListener.Errores).ToList();
 
                 if (todosLosErrores.Count > 0)
@@ -176,24 +177,42 @@ namespace ProyectoSoftwareSistemas
             }
         }
 
-        private void ActualizarTablas(List<LineaIntermedia> lineas, Dictionary<string, Simbolo> tabsim, Dictionary<string, Bloque> tabblk, List<string> objeto)
+        private void ActualizarTablas(List<LineaIntermedia> lineas, List<Seccion> secciones, List<string> objeto)
         {
-            // Archivo Intermedio
+            // 1. Archivo Intermedio
             dgvIntermedio.DataSource = lineas;
-            if (dgvIntermedio.Columns["Direccion"] != null)
+            if (dgvIntermedio.Columns["ContadorPrograma"] != null)
             {
-                dgvIntermedio.Columns["Direccion"].DefaultCellStyle.Format = "X4";
+                dgvIntermedio.Columns["ContadorPrograma"].HeaderText = "P.C.";
             }
 
-            // TABSIM
-            dgvTabsim.DataSource = tabsim.Values.ToList();
+            // 2. TABSIM - Columnas corregidas
+            var todosSimbolos = secciones.SelectMany(sec => sec.TABSIM.Values.Select(s => new {
+                Seccion = sec.Nombre,
+                Simbolo = s.Nombre,
+                Direccion = s.Direccion,
+                Tipo = s.Tipo,
+                NumBloq = s.Bloque,
+                SimboloExterno = (s.Tipo == "E") // Al ser un booleano (true/false), C# pondrá el Checkbox
+            })).ToList();
+
+            dgvTabsim.DataSource = todosSimbolos;
             if (dgvTabsim.Columns["Direccion"] != null)
             {
                 dgvTabsim.Columns["Direccion"].DefaultCellStyle.Format = "X4";
             }
 
-            // Tabla de Bloques
-            dgvBloques.DataSource = tabblk.Values.ToList();
+            // 3. Tabla de Bloques
+            var todosBloques = secciones.SelectMany(sec => sec.TABBLK.Values.Select(b => new {
+                Seccion = sec.Nombre,
+                Numero = b.Numero,
+                Nombre = b.Nombre,
+                Locctr = b.Locctr,
+                Inicio = b.DirInicial,
+                Longitud = b.Longitud
+            })).ToList();
+
+            dgvBloques.DataSource = todosBloques;
             if (dgvBloques.Columns["Locctr"] != null)
             {
                 dgvBloques.Columns["Locctr"].DefaultCellStyle.Format = "X4";
@@ -207,7 +226,7 @@ namespace ProyectoSoftwareSistemas
                 dgvBloques.Columns["Longitud"].DefaultCellStyle.Format = "X4";
             }
 
-            // Programa Objeto
+            // 4. Programa Objeto
             dgvObjeto.DataSource = objeto.Select(reg => new { Registro = reg }).ToList();
 
             FormatearGrids();
@@ -239,10 +258,6 @@ namespace ProyectoSoftwareSistemas
         }
 
     }
-
-    // ====================================================================================
-    // CLASES MANEJADORAS DE ERRORES (LISTENERS)
-    // ====================================================================================
 
     public class ParserErrorListener : BaseErrorListener
     {

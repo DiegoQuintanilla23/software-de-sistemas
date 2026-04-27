@@ -829,28 +829,29 @@ namespace ProyectoSoftwareSistemas
                 wsBloques.Columns().AdjustToContents();
 
                 // ---------- TABSIM ----------
-                var wsSim = workbook.Worksheets.Add("TABSIM_" + sec.Nombre);
+				var wsSim = workbook.Worksheets.Add("TABSIM_" + sec.Nombre);
 
-                wsSim.Cell(1, 1).Value = "Simbolo";
-                wsSim.Cell(1, 2).Value = "Direccion";
-                wsSim.Cell(1, 3).Value = "Tipo";
-                wsSim.Cell(1, 4).Value = "Relativo";
-                wsSim.Cell(1, 5).Value = "Bloque";
+				// Encabezados actualizados
+				wsSim.Cell(1, 1).Value = "Simbolo";
+				wsSim.Cell(1, 2).Value = "Direccion";
+				wsSim.Cell(1, 3).Value = "Tipo";
+				wsSim.Cell(1, 4).Value = "NumBloq";
+				wsSim.Cell(1, 5).Value = "SimboloExterno";
 
-                int filaS = 2;
+				int filaS = 2;
 
-                foreach (var s in sec.TABSIM.Values)
-                {
-                    wsSim.Cell(filaS, 1).Value = s.Nombre;
-                    wsSim.Cell(filaS, 2).Value = s.Direccion.ToString("X4");
-                    wsSim.Cell(filaS, 3).Value = s.Tipo;
-                    wsSim.Cell(filaS, 4).Value = s.EsRelativo ? "Sí" : "No";
-                    wsSim.Cell(filaS, 5).Value = s.Bloque;
+				foreach (var s in sec.TABSIM.Values)
+				{
+					wsSim.Cell(filaS, 1).Value = s.Nombre;
+					wsSim.Cell(filaS, 2).Value = s.Direccion.ToString("X4");
+					wsSim.Cell(filaS, 3).Value = s.Tipo;
+					wsSim.Cell(filaS, 4).Value = s.Bloque; // Representa el bloque al que pertenece
+					wsSim.Cell(filaS, 5).Value = s.Tipo == "E" ? "Sí" : "No"; // Indica si es externo
 
-                    filaS++;
-                }
+					filaS++;
+				}
 
-                wsSim.Columns().AdjustToContents();
+				wsSim.Columns().AdjustToContents();
             }
 
             // =========================
