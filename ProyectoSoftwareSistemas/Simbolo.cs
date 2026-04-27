@@ -10,8 +10,12 @@ namespace ProyectoSoftwareSistemas
     {
         public string Nombre { get; set; }
         public int Direccion { get; set; }
+
         public bool EsRelativo { get; set; } = true;
-        public string Tipo { get; set; } = "R"; // R = relativo, A = absoluto
+
+        // R = relativo, A = absoluto, E = externo
+        public string Tipo { get; set; } = "R";
+
         public string Bloque { get; set; } = "DEFAULT";
     }
 }

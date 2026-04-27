@@ -26,32 +26,80 @@ namespace ProyectoSoftwareSistemas
         public string Errores { get; set; } = "";
         public string CodigoObjeto { get; set; } = "";
     }
+
+    public class Seccion
+    {
+        public string Nombre { get; set; }
+        public Dictionary<string, Simbolo> TABSIM { get; set; } = new Dictionary<string, Simbolo>();
+        public Dictionary<string, Bloque> TABBLK { get; set; } = new Dictionary<string, Bloque>();
+        public Bloque BloqueActual { get; set; }
+        public int ContadorBloques { get; set; } = 0;
+    }
+
     public class GeneradorArchivoIntermedio
     {
         private SICXEParser.ProgramContext _root;
-        private Dictionary<string, Simbolo> TABSIM = new Dictionary<string, Simbolo>();
-        private Dictionary<string, Bloque> TABBLK = new Dictionary<string, Bloque>();
-        private Bloque bloqueActual;
+        List<Seccion> SECCIONES = new List<Seccion>();
+        private Seccion seccionActual;
+
+        Dictionary<string, Simbolo> TABSIM => seccionActual.TABSIM;
+        Dictionary<string, Bloque> TABBLK => seccionActual.TABBLK;
+        Bloque bloqueActual => seccionActual.BloqueActual;
+
         private int contadorBloques = 0;
+        Seccion seccionPrincipal;
 
         public GeneradorArchivoIntermedio(SICXEParser.ProgramContext root)
         {
             _root = root;
 
-            TABBLK["DEFAULT"] = new Bloque
+            var seccion = new Seccion
+            {
+                Nombre = "DEFAULT",
+                TABSIM = new Dictionary<string, Simbolo>(),
+                TABBLK = new Dictionary<string, Bloque>()
+            };
+
+            seccion.TABBLK["DEFAULT"] = new Bloque
             {
                 Numero = 0,
                 Nombre = "DEFAULT",
                 Locctr = 0
             };
 
-            bloqueActual = TABBLK["DEFAULT"];
+            seccion.BloqueActual = seccion.TABBLK["DEFAULT"];
+            seccion.ContadorBloques = 0;
+
+            SECCIONES.Add(seccion);
+
+            seccionActual = seccion;
+            seccionPrincipal = seccion;
         }
 
         private bool EsSalto(string opcode)
         {
             return opcode == "J" || opcode == "JEQ" || opcode == "JGT"
                 || opcode == "JLT" || opcode == "JSUB";
+        }
+
+        string ObtenerCodOp(SICXEParser.StatementContext stmt)
+        {
+            var dir = stmt.directive();
+
+            if (dir != null)
+            {
+                if (dir.DIRECTIVE() != null)
+                    return dir.DIRECTIVE().GetText();
+
+                var text = dir.GetText();
+
+                if (text.StartsWith("EXTDEF")) return "EXTDEF";
+                if (text.StartsWith("EXTREF")) return "EXTREF";
+                if (text.StartsWith("CSECT")) return "CSECT";
+                if (text.StartsWith("USE")) return "USE";
+            }
+
+            return "";
         }
 
         public List<LineaIntermedia> GenerarLineas()
@@ -86,7 +134,9 @@ namespace ProyectoSoftwareSistemas
 
                 if (!string.IsNullOrEmpty(nueva.Etiqueta))
                 {
-                    bool esStart = linea.statement().directive() != null && linea.statement().directive().DIRECTIVE().GetText() == "START";
+                    string codop = ObtenerCodOp(linea.statement());
+
+                    bool esStart = codop == "START";
                     if (TABSIM.ContainsKey(nueva.Etiqueta))
                     {
                         nueva.Errores = "Error: Símbolo duplicado";
@@ -462,38 +512,108 @@ namespace ProyectoSoftwareSistemas
                         {
                             string nombre = string.IsNullOrWhiteSpace(nueva.Operador) ? "DEFAULT" : nueva.Operador;
 
-                            if (!TABBLK.ContainsKey(nombre))
+                            if (!seccionActual.TABBLK.ContainsKey(nombre))
                             {
-                                TABBLK[nombre] = new Bloque
+                                seccionActual.TABBLK[nombre] = new Bloque
                                 {
-                                    Numero = ++contadorBloques,
+                                    Numero = ++seccionActual.ContadorBloques,
                                     Nombre = nombre,
                                     Locctr = 0
                                 };
                             }
 
-                            bloqueActual = TABBLK[nombre];
+                            seccionActual.BloqueActual = seccionActual.TABBLK[nombre];
 
-                            // actualizar valores de la línea DESPUÉS del cambio de bloque
-                            nueva.NumeroBloque = bloqueActual.Numero;
-                            nueva.ContadorPrograma = bloqueActual.Locctr.ToString("X4");
+                            nueva.NumeroBloque = seccionActual.BloqueActual.Numero;
+                            nueva.ContadorPrograma = seccionActual.BloqueActual.Locctr.ToString("X4");
 
                             insertarEnTabSim = false;
                         }
                         else if (nueva.CodigoOp == "END")
                         {
-                            // Forzar que END esté en el bloque 0 (DEFAULT)
-                            if (TABBLK.ContainsKey("DEFAULT"))
-                            {
-                                bloqueActual = TABBLK["DEFAULT"];
-                            }
+                            var bloquePrincipal = seccionPrincipal.TABBLK["DEFAULT"];
 
-                            nueva.NumeroBloque = bloqueActual.Numero;
-                            nueva.ContadorPrograma = bloqueActual.Locctr.ToString("X4");
+                            nueva.NumeroBloque = bloquePrincipal.Numero;
+                            nueva.ContadorPrograma = bloquePrincipal.Locctr.ToString("X4");
+
+                            if (!string.IsNullOrWhiteSpace(nueva.Operador))
+                            {
+                                if (!seccionPrincipal.TABSIM.ContainsKey(nueva.Operador))
+                                {
+                                    nueva.Errores = "Error: símbolo de END no pertenece a la sección principal";
+                                }
+                            }
 
                             insertarEnTabSim = false;
                         }
+                        else if (nueva.CodigoOp == "CSECT")
+                        {
+                            if (string.IsNullOrEmpty(nueva.Etiqueta))
+                            {
+                                nueva.Errores = "Error: CSECT sin nombre";
+                                continue;
+                            }
 
+                            var nuevaSeccion = new Seccion
+                            {
+                                Nombre = nueva.Etiqueta,
+                                TABSIM = new Dictionary<string, Simbolo>(),
+                                TABBLK = new Dictionary<string, Bloque>()
+                            };
+
+                            nuevaSeccion.TABBLK["DEFAULT"] = new Bloque
+                            {
+                                Numero = 0,
+                                Nombre = "DEFAULT",
+                                Locctr = 0
+                            };
+
+                            nuevaSeccion.BloqueActual = nuevaSeccion.TABBLK["DEFAULT"];
+                            nuevaSeccion.ContadorBloques = 0;
+
+                            SECCIONES.Add(nuevaSeccion);
+                            seccionActual = nuevaSeccion;
+
+                            nueva.NumeroBloque = seccionActual.BloqueActual.Numero;
+                            nueva.ContadorPrograma = "0000";
+
+                            evaluador = new EvaluadorExpresiones(TABSIM, TABBLK);
+
+                            insertarEnTabSim = false;
+                            nueva.ContadorPrograma = "0000";
+                        }
+                        else if (nueva.CodigoOp == "EXTREF")
+                        {
+                            var ids = stmt.directive().idList().ID();
+
+                            foreach (var id in ids)
+                            {
+                                string nombre = id.GetText();
+
+                                if (!TABSIM.ContainsKey(nombre))
+                                {
+                                    TABSIM[nombre] = new Simbolo
+                                    {
+                                        Nombre = nombre,
+                                        Direccion = 0,
+                                        Tipo = "E",
+                                        EsRelativo = false,
+                                        Bloque = ""
+                                    };
+                                }
+                                else if (TABSIM[nombre].Tipo == "E")
+                                {
+                                    // ya existe como externo → ok
+                                }
+                            }
+
+                            insertarEnTabSim = false;
+                        }
+                        else if (nueva.CodigoOp == "EXTDEF")
+                        {
+                            // No haces nada en paso 1 más que registrar después
+                            insertarEnTabSim = false;
+                        }
                     }
                     else
                     {
@@ -518,13 +638,16 @@ namespace ProyectoSoftwareSistemas
                 lista.Add(nueva);
             }
 
-            int dir = 0;
-
-            foreach (var b in TABBLK.Values.OrderBy(x => x.Numero))
+            foreach (var sec in SECCIONES)
             {
-                b.Longitud = b.Locctr;
-                b.DirInicial = dir;
-                dir += b.Longitud;
+                int dir = 0;
+
+                foreach (var b in sec.TABBLK.Values.OrderBy(x => x.Numero))
+                {
+                    b.Longitud = b.Locctr;
+                    b.DirInicial = dir;
+                    dir += b.Longitud;
+                }
             }
 
             return lista;
@@ -620,6 +743,10 @@ namespace ProyectoSoftwareSistemas
         public void GenerarExcel(List<LineaIntermedia> lineas, List<string> programaObjeto, string nombreArchivo)
         {
             var workbook = new XLWorkbook();
+
+            // =========================
+            // HOJA ARCHIVO INTERMEDIO
+            // =========================
             var worksheet = workbook.Worksheets.Add("ArchivoIntermedio");
 
             worksheet.Cell(1, 1).Value = "Num. Linea";
@@ -650,14 +777,18 @@ namespace ProyectoSoftwareSistemas
                 fila++;
             }
 
-            //Hoja 2, progama objeto
+            worksheet.Columns().AdjustToContents();
+
+            // =========================
+            // HOJA PROGRAMA OBJETO
+            // =========================
             if (programaObjeto != null && programaObjeto.Count > 0)
             {
                 var wsObjeto = workbook.Worksheets.Add("ProgramaObjeto");
 
                 int filaObj = 1;
                 foreach (string registro in programaObjeto)
-					{
+                {
                     wsObjeto.Cell(filaObj, 1).Value = registro;
                     filaObj++;
                 }
@@ -665,56 +796,75 @@ namespace ProyectoSoftwareSistemas
                 wsObjeto.Column(1).AdjustToContents();
             }
 
-            var wsBloques = workbook.Worksheets.Add("TABBLK");
-
-            wsBloques.Cell(1, 1).Value = "No. Bloque";
-            wsBloques.Cell(1, 2).Value = "Nombre";
-            wsBloques.Cell(1, 3).Value = "Longitud";
-            wsBloques.Cell(1, 4).Value = "Dir Inicial";
-
-            int filaB = 2;
-
-            foreach (var b in TABBLK.Values.OrderBy(x => x.Numero))
+            // =========================
+            // TABLAS POR SECCIÓN
+            // =========================
+            foreach (var sec in SECCIONES)
             {
-                wsBloques.Cell(filaB, 1).Value = b.Numero;
-                wsBloques.Cell(filaB, 2).Value = b.Nombre;
-                wsBloques.Cell(filaB, 3).Value = b.Longitud.ToString("X4");
-                wsBloques.Cell(filaB, 4).Value = b.DirInicial.ToString("X4");
-                filaB++;
+                // ---------- TABBLK ----------
+                var wsBloques = workbook.Worksheets.Add("TABBLK_" + sec.Nombre);
+
+                wsBloques.Cell(1, 1).Value = "No. Bloque";
+                wsBloques.Cell(1, 2).Value = "Nombre";
+                wsBloques.Cell(1, 3).Value = "Longitud";
+                wsBloques.Cell(1, 4).Value = "Dir Inicial";
+
+                int filaB = 2;
+                int dir = 0;
+
+                foreach (var b in sec.TABBLK.Values.OrderBy(x => x.Numero))
+                {
+                    b.Longitud = b.Locctr;
+                    b.DirInicial = dir;
+                    dir += b.Longitud;
+
+                    wsBloques.Cell(filaB, 1).Value = b.Numero;
+                    wsBloques.Cell(filaB, 2).Value = b.Nombre;
+                    wsBloques.Cell(filaB, 3).Value = b.Longitud.ToString("X4");
+                    wsBloques.Cell(filaB, 4).Value = b.DirInicial.ToString("X4");
+
+                    filaB++;
+                }
+
+                wsBloques.Columns().AdjustToContents();
+
+                // ---------- TABSIM ----------
+				var wsSim = workbook.Worksheets.Add("TABSIM_" + sec.Nombre);
+
+				// Encabezados actualizados
+				wsSim.Cell(1, 1).Value = "Simbolo";
+				wsSim.Cell(1, 2).Value = "Direccion";
+				wsSim.Cell(1, 3).Value = "Tipo";
+				wsSim.Cell(1, 4).Value = "NumBloq";
+				wsSim.Cell(1, 5).Value = "SimboloExterno";
+
+				int filaS = 2;
+
+				foreach (var s in sec.TABSIM.Values)
+				{
+					wsSim.Cell(filaS, 1).Value = s.Nombre;
+					wsSim.Cell(filaS, 2).Value = s.Direccion.ToString("X4");
+					wsSim.Cell(filaS, 3).Value = s.Tipo;
+					wsSim.Cell(filaS, 4).Value = s.Bloque; // Representa el bloque al que pertenece
+					wsSim.Cell(filaS, 5).Value = s.Tipo == "E" ? "Sí" : "No"; // Indica si es externo
+
+					filaS++;
+				}
+
+				wsSim.Columns().AdjustToContents();
             }
 
-            wsBloques.Columns().AdjustToContents();
-
-            // Hoja TABSIM
-            var wsSim = workbook.Worksheets.Add("TABSIM");
-
-            wsSim.Cell(1, 1).Value = "Simbolo";
-            wsSim.Cell(1, 2).Value = "Direccion";
-            wsSim.Cell(1, 3).Value = "Tipo";
-            wsSim.Cell(1, 4).Value = "Relativo";
-            wsSim.Cell(1, 5).Value = "Bloque";
-
-            int filaS = 2;
-
-            foreach (var s in TABSIM.Values)
-            {
-                wsSim.Cell(filaS, 1).Value = s.Nombre;
-                wsSim.Cell(filaS, 2).Value = s.Direccion.ToString("X4");
-                wsSim.Cell(filaS, 3).Value = s.Tipo;
-                wsSim.Cell(filaS, 4).Value = s.EsRelativo ? "Sí" : "No";
-                wsSim.Cell(filaS, 5).Value = s.Bloque;
-                filaS++;
-            }
-
-            wsSim.Columns().AdjustToContents();
-
+            // =========================
+            // GUARDAR ARCHIVO
+            // =========================
             string nombreSinExtension = Path.GetFileNameWithoutExtension(nombreArchivo);
             string nuevoNombre = nombreSinExtension + "_ArchivoIntermedio.xlsx";
-            string carpetaRaiz = Directory.GetCurrentDirectory();
-            carpetaRaiz = carpetaRaiz + "\\output\\";
+
+            string carpetaRaiz = Directory.GetCurrentDirectory() + "\\output\\";
             string rutaFinal = Path.Combine(carpetaRaiz, nuevoNombre);
 
             workbook.SaveAs(rutaFinal);
+
             var psi = new ProcessStartInfo
             {
                 FileName = rutaFinal,
@@ -781,6 +931,11 @@ namespace ProyectoSoftwareSistemas
         public Dictionary<string, Bloque> GetTabBlk()
         {
             return TABBLK;
+        }
+
+        public List<Seccion> GetSecciones()
+        {
+            return SECCIONES;
         }
     }
 }

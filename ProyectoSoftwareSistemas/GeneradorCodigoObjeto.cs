@@ -160,6 +160,28 @@ namespace ProyectoSoftwareSistemas
             return EsFormato3(baseCodop);
         }
 
+        private string ObtenerBanderasModulo(ResultadoEvaluacion res)
+        {
+            string banderas = "";
+
+            if (res.EsRelativo)
+                banderas += "*R";
+
+            foreach (var kv in res.SimbolosExternos)
+            {
+                if (kv.Value > 0)
+                {
+                    for (int i = 0; i < kv.Value; i++) banderas += "*SE";
+                }
+                else if (kv.Value < 0)
+                {
+                    for (int i = 0; i < Math.Abs(kv.Value); i++) banderas += "*SE"; // El PDF nuevo usa *SE incluso para restas en el REF3
+                }
+            }
+
+            return banderas;
+        }
+
         private bool EsDirectivaSinCodigo(string codop)
         {
             return new[]
@@ -207,13 +229,10 @@ namespace ProyectoSoftwareSistemas
             }
 
             valor = valor & 0xFFFFFF;
-
             string objeto = valor.ToString("X6");
 
-            if (resultado.EsRelativo)
-            {
-                objeto += "*";
-            }
+            // Agregamos banderas de Modificación (*R, *SE, #SE)
+            objeto += ObtenerBanderasModulo(resultado);
 
             linea.CodigoObjeto = objeto;
         }
@@ -397,6 +416,13 @@ namespace ProyectoSoftwareSistemas
                 return;
             }
 
+            if (res.SimbolosExternos.Count > 0)
+            {
+                AgregarError(linea, "Error: Símbolos externos requieren Formato 4 (+)");
+                linea.CodigoObjeto = ((opcode << 16) | (0x3 << 12) | 0xFFF).ToString("X6");
+                return;
+            }
+
             // ← FIX: solo importa RelCount neto, no cuántos bloques participaron
             bool esDireccionValida =
                 res.RelCount == 1 ||
@@ -564,12 +590,12 @@ namespace ProyectoSoftwareSistemas
 
             string obj = codigo.ToString("X8");
 
-            if (res.RelCount == 1)
-                obj += "*";
+            // Agregamos banderas de Modificación a las extendidas
+            obj += ObtenerBanderasModulo(res);
 
             linea.CodigoObjeto = obj;
         }
-        
+
         private void AgregarError(LineaIntermedia linea, string mensaje)
         {
             if (string.IsNullOrWhiteSpace(linea.Errores))
@@ -580,6 +606,7 @@ namespace ProyectoSoftwareSistemas
 
         public void Generar()
         {
+
             foreach (var linea in _lineas)
             {
                 if (linea.CodigoOp == "BASE")

@@ -6,16 +6,15 @@ namespace ProyectoSoftwareSistemas
     public class ResultadoEvaluacion
     {
         public int Valor { get; set; }
-
         public int RelCount { get; set; } = 0;
-
         public string Tipo { get; set; } = "A";
-
         public bool EsRelativo => RelCount == 1;
-
         public bool Error { get; set; } = false;
         public string MensajeError { get; set; } = "";
         public Dictionary<string, int> BloquesRelativos { get; set; } = new Dictionary<string, int>();
+
+        // NUEVO: Rastrear símbolos externos sumados o restados
+        public Dictionary<string, int> SimbolosExternos { get; set; } = new Dictionary<string, int>();
     }
 
     public class EvaluadorExpresiones
@@ -98,26 +97,26 @@ namespace ProyectoSoftwareSistemas
                     RelCount = suma
                 };
 
-                // combinar bloques
-                foreach (var kv in left.BloquesRelativos)
-                {
-                    nuevo.BloquesRelativos[kv.Key] = kv.Value;
-                }
+                // combinar 
+				foreach (var kv in left.SimbolosExternos)
+				{
+					nuevo.SimbolosExternos[kv.Key] = kv.Value;
+				}
 
-                foreach (var kv in right.BloquesRelativos)
-                {
-                    int signo = (op == '-') ? -1 : 1;
+				foreach (var kv in right.SimbolosExternos)
+				{
+					int signo = (op == '-') ? -1 : 1;
 
-                    if (!nuevo.BloquesRelativos.ContainsKey(kv.Key))
-                        nuevo.BloquesRelativos[kv.Key] = 0;
+					if (!nuevo.SimbolosExternos.ContainsKey(kv.Key))
+						nuevo.SimbolosExternos[kv.Key] = 0;
 
-                    nuevo.BloquesRelativos[kv.Key] += signo * kv.Value;
-                }
+					nuevo.SimbolosExternos[kv.Key] += signo * kv.Value;
+				}
 
-                left = nuevo;
-            }
+				left = nuevo;
+			}
 
-            return left;
+			return left;
         }
 
 
@@ -138,6 +137,9 @@ namespace ProyectoSoftwareSistemas
 
                 if (left.RelCount != 0 || right.RelCount != 0)
                     return Error("Relativos no permitidos en * o /");
+
+                if (left.SimbolosExternos.Count > 0 || right.SimbolosExternos.Count > 0)
+                    return Error("Símbolos externos no permitidos en * o /");
 
                 // ← NUEVO: aplicar ajustes de bloque antes de operar
                 int valorLeft = left.Valor;
@@ -241,8 +243,21 @@ namespace ProyectoSoftwareSistemas
             {
                 var s = _tabSim[token];
 
-                int valor = s.Direccion;
+                // símbolo externo
+                if (s.Tipo == "E")
+                {
+                    var resE = new ResultadoEvaluacion
+                    {
+                        Valor = 0,
+                        RelCount = 0,
+                        Tipo = "E"
+                    };
+                    // Guardamos el nombre del símbolo externo (+1 asumiendo suma inicial)
+                    resE.SimbolosExternos[token] = 1;
+                    return resE;
+                }
 
+                int valor = s.Direccion;
                 return Ok(valor, s.EsRelativo, s.Bloque);
             }
 

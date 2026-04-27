@@ -166,6 +166,13 @@ public interface ISICXEVisitor<Result> : IParseTreeVisitor<Result> {
 	Result VisitDirective([NotNull] SICXEParser.DirectiveContext context);
 
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="SICXEParser.idList"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitIdList([NotNull] SICXEParser.IdListContext context);
+
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="SICXEParser.expr"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

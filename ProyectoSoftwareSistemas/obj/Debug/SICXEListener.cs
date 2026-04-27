@@ -241,6 +241,17 @@ public interface ISICXEListener : IParseTreeListener {
 	void ExitDirective([NotNull] SICXEParser.DirectiveContext context);
 
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="SICXEParser.idList"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterIdList([NotNull] SICXEParser.IdListContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SICXEParser.idList"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitIdList([NotNull] SICXEParser.IdListContext context);
+
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="SICXEParser.expr"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

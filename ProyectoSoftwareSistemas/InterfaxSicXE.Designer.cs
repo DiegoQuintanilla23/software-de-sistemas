@@ -74,7 +74,7 @@
             this.accionesToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1133, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(1183, 28);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -157,8 +157,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.tableLayoutPanel1);
-            this.splitContainer1.Size = new System.Drawing.Size(1133, 502);
-            this.splitContainer1.SplitterDistance = 240;
+            this.splitContainer1.Size = new System.Drawing.Size(1183, 579);
+            this.splitContainer1.SplitterDistance = 276;
             this.splitContainer1.TabIndex = 1;
             // 
             // txtEditor
@@ -168,7 +168,7 @@
             this.txtEditor.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtEditor.Location = new System.Drawing.Point(0, 0);
             this.txtEditor.Name = "txtEditor";
-            this.txtEditor.Size = new System.Drawing.Size(1133, 240);
+            this.txtEditor.Size = new System.Drawing.Size(1183, 276);
             this.txtEditor.TabIndex = 0;
             this.txtEditor.Text = "";
             this.txtEditor.WordWrap = false;
@@ -188,7 +188,7 @@
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1133, 258);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1183, 299);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // groupBox1
@@ -197,7 +197,7 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(560, 123);
+            this.groupBox1.Size = new System.Drawing.Size(585, 143);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Archivo Intermedio";
@@ -214,16 +214,16 @@
             this.dgvIntermedio.RowHeadersVisible = false;
             this.dgvIntermedio.RowHeadersWidth = 51;
             this.dgvIntermedio.RowTemplate.Height = 24;
-            this.dgvIntermedio.Size = new System.Drawing.Size(554, 102);
+            this.dgvIntermedio.Size = new System.Drawing.Size(579, 122);
             this.dgvIntermedio.TabIndex = 0;
             // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.dgvTabsim);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox2.Location = new System.Drawing.Point(569, 3);
+            this.groupBox2.Location = new System.Drawing.Point(594, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(561, 123);
+            this.groupBox2.Size = new System.Drawing.Size(586, 143);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "TABSIM";
@@ -240,16 +240,16 @@
             this.dgvTabsim.RowHeadersVisible = false;
             this.dgvTabsim.RowHeadersWidth = 51;
             this.dgvTabsim.RowTemplate.Height = 24;
-            this.dgvTabsim.Size = new System.Drawing.Size(555, 102);
+            this.dgvTabsim.Size = new System.Drawing.Size(580, 122);
             this.dgvTabsim.TabIndex = 0;
             // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.dgvBloques);
             this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox3.Location = new System.Drawing.Point(3, 132);
+            this.groupBox3.Location = new System.Drawing.Point(3, 152);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(560, 123);
+            this.groupBox3.Size = new System.Drawing.Size(585, 144);
             this.groupBox3.TabIndex = 2;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Tabla de Bloques";
@@ -266,16 +266,16 @@
             this.dgvBloques.RowHeadersVisible = false;
             this.dgvBloques.RowHeadersWidth = 51;
             this.dgvBloques.RowTemplate.Height = 24;
-            this.dgvBloques.Size = new System.Drawing.Size(554, 102);
+            this.dgvBloques.Size = new System.Drawing.Size(579, 123);
             this.dgvBloques.TabIndex = 0;
             // 
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.dgvObjeto);
             this.groupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox4.Location = new System.Drawing.Point(569, 132);
+            this.groupBox4.Location = new System.Drawing.Point(594, 152);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(561, 123);
+            this.groupBox4.Size = new System.Drawing.Size(586, 144);
             this.groupBox4.TabIndex = 3;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Programa Objeto";
@@ -292,7 +292,7 @@
             this.dgvObjeto.RowHeadersVisible = false;
             this.dgvObjeto.RowHeadersWidth = 51;
             this.dgvObjeto.RowTemplate.Height = 24;
-            this.dgvObjeto.Size = new System.Drawing.Size(555, 102);
+            this.dgvObjeto.Size = new System.Drawing.Size(580, 123);
             this.dgvObjeto.TabIndex = 0;
             // 
             // openFileDialog1
@@ -303,7 +303,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1133, 530);
+            this.ClientSize = new System.Drawing.Size(1183, 607);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
