@@ -5,12 +5,15 @@ using System.Linq;
 using System.Windows.Forms;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
+using System.Drawing;
 
 namespace ProyectoSoftwareSistemas
 {
     public partial class InterfazSicXE : Form
     {
         private string rutaArchivoActual = string.Empty;
+        private Dictionary<string, Color> coloresSeccion = new Dictionary<string, Color>();
+
 
         public InterfazSicXE()
         {
@@ -145,7 +148,6 @@ namespace ProyectoSoftwareSistemas
                 List<string> archivoObjeto = generadorProgramaObjeto.Generar();
 
                 // 3. Cargar datos en los DataGridViews
-                // ActualizarTablas(lineas, tabsim, tabblk, archivoObjeto);
                 //Cargar datos en los DataGridViews
                 ActualizarTablas(lineas, secciones, archivoObjeto);
 
@@ -186,14 +188,37 @@ namespace ProyectoSoftwareSistemas
                 dgvIntermedio.Columns["ContadorPrograma"].HeaderText = "P.C.";
             }
 
-            // 2. TABSIM - Columnas corregidas
+            foreach (DataGridViewRow row in dgvIntermedio.Rows)
+            {
+                if (row.Cells["NumeroBloque"].Value != null)
+                {
+                    int b = Convert.ToInt32(row.Cells["NumeroBloque"].Value);
+
+                    Color color = Color.FromArgb(
+                        230 + (b * 10) % 25,
+                        230 + (b * 20) % 25,
+                        230 + (b * 30) % 25
+                    );
+
+                    row.DefaultCellStyle.BackColor = color;
+                }
+
+                if (row.Cells["CodigoOp"].Value != null &&
+                    row.Cells["CodigoOp"].Value.ToString() == "CSECT")
+                {
+                    row.DefaultCellStyle.BackColor = Color.FromArgb(200, 200, 255);
+                    row.DefaultCellStyle.Font = new Font(dgvIntermedio.Font, FontStyle.Bold);
+                }
+            }
+
+            // 2. TABSIM
             var todosSimbolos = secciones.SelectMany(sec => sec.TABSIM.Values.Select(s => new {
                 Seccion = sec.Nombre,
                 Simbolo = s.Nombre,
                 Direccion = s.Direccion,
                 Tipo = s.Tipo,
                 NumBloq = s.Bloque,
-                SimboloExterno = (s.Tipo == "E") // Al ser un booleano (true/false), C# pondrá el Checkbox
+                SimboloExterno = (s.Tipo == "E")
             })).ToList();
 
             dgvTabsim.DataSource = todosSimbolos;
@@ -201,6 +226,8 @@ namespace ProyectoSoftwareSistemas
             {
                 dgvTabsim.Columns["Direccion"].DefaultCellStyle.Format = "X4";
             }
+
+            ColorearPorSeccion(dgvTabsim, "Seccion");
 
             // 3. Tabla de Bloques
             var todosBloques = secciones.SelectMany(sec => sec.TABBLK.Values.Select(b => new {
@@ -226,6 +253,8 @@ namespace ProyectoSoftwareSistemas
                 dgvBloques.Columns["Longitud"].DefaultCellStyle.Format = "X4";
             }
 
+            ColorearPorSeccion(dgvBloques, "Seccion");
+
             // 4. Programa Objeto
             dgvObjeto.DataSource = objeto.Select(reg => new { Registro = reg }).ToList();
 
@@ -243,6 +272,38 @@ namespace ProyectoSoftwareSistemas
                     grid.ReadOnly = true;
                     grid.AllowUserToAddRows = false;
                     grid.RowHeadersVisible = false;
+                }
+            }
+        }
+
+        private Color ObtenerColorSeccion(string seccion)
+        {
+            if (!coloresSeccion.ContainsKey(seccion))
+            {
+                var coloresPastel = new List<Color>
+        {
+            Color.FromArgb(255, 230, 230),
+            Color.FromArgb(230, 255, 230),
+            Color.FromArgb(230, 230, 255),
+            Color.FromArgb(255, 255, 230),
+            Color.FromArgb(255, 230, 255),
+            Color.FromArgb(230, 255, 255)
+        };
+
+                coloresSeccion[seccion] = coloresPastel[coloresSeccion.Count % coloresPastel.Count];
+            }
+
+            return coloresSeccion[seccion];
+        }
+
+        private void ColorearPorSeccion(DataGridView grid, string columnaSeccion)
+        {
+            foreach (DataGridViewRow row in grid.Rows)
+            {
+                if (row.Cells[columnaSeccion].Value != null)
+                {
+                    string sec = row.Cells[columnaSeccion].Value.ToString();
+                    row.DefaultCellStyle.BackColor = ObtenerColorSeccion(sec);
                 }
             }
         }

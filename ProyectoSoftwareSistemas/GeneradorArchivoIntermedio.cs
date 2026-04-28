@@ -407,38 +407,22 @@ namespace ProyectoSoftwareSistemas
                             {
                                 var res = evaluador.Evaluar(nueva, bloqueActual.Locctr);
 
-                                // VALIDAR BLOQUES SOLO EN EQU
-                                var (bloques, hayRel, hayAbs) = ObtenerInfoExpresion(nueva.Operador);
+                                // Validar bloques (solo si hay más de uno distinto)
+                                var (bloques, _, _) = ObtenerInfoExpresion(nueva.Operador);
 
-                                // 1. Diferentes bloques
                                 if (bloques.Count > 1)
                                 {
-                                    nueva.Errores = "Error: Símbolos de diferentes bloques en EQU";
-                                    hayErrorSemantico = true;
-                                }
-
-                                // 2. Mezcla inválida (según tu práctica)
-                                if (hayRel && hayAbs)
-                                {
-                                    if (string.IsNullOrEmpty(nueva.Errores))
-                                        nueva.Errores = "Error: Símbolos de diferentes bloques en EQU";
-                                    else
-                                        nueva.Errores += " | Error: Símbolos de diferentes bloques en EQU";
-
+                                    nueva.Errores = "Error: símbolos de diferentes bloques en EQU";
                                     hayErrorSemantico = true;
                                 }
 
                                 if (res.Error || hayErrorSemantico)
                                 {
-                                    // Acumular error
                                     if (string.IsNullOrEmpty(nueva.Errores))
                                         nueva.Errores = res.MensajeError;
-                                    else
+                                    else if (!string.IsNullOrEmpty(res.MensajeError))
                                         nueva.Errores += " | " + res.MensajeError;
 
-                                    hayErrorSemantico = true;
-
-                                    // IMPORTANTE: insertar con FFFF tipo A
                                     TABSIM[nueva.Etiqueta] = new Simbolo
                                     {
                                         Nombre = nueva.Etiqueta,
@@ -801,6 +785,31 @@ namespace ProyectoSoftwareSistemas
             // =========================
             foreach (var sec in SECCIONES)
             {
+                // ---------- TABSIM ----------
+                var wsSim = workbook.Worksheets.Add("TABSIM_" + sec.Nombre);
+
+                // Encabezados actualizados
+                wsSim.Cell(1, 1).Value = "Simbolo";
+                wsSim.Cell(1, 2).Value = "Direccion";
+                wsSim.Cell(1, 3).Value = "Tipo";
+                wsSim.Cell(1, 4).Value = "NumBloq";
+                wsSim.Cell(1, 5).Value = "SimboloExterno";
+
+                int filaS = 2;
+
+                foreach (var s in sec.TABSIM.Values)
+                {
+                    wsSim.Cell(filaS, 1).Value = s.Nombre;
+                    wsSim.Cell(filaS, 2).Value = s.Direccion.ToString("X4");
+                    wsSim.Cell(filaS, 3).Value = s.Tipo;
+                    wsSim.Cell(filaS, 4).Value = s.Bloque; // Representa el bloque al que pertenece
+                    wsSim.Cell(filaS, 5).Value = s.Tipo == "E" ? "Sí" : "No"; // Indica si es externo
+
+                    filaS++;
+                }
+
+                wsSim.Columns().AdjustToContents();
+
                 // ---------- TABBLK ----------
                 var wsBloques = workbook.Worksheets.Add("TABBLK_" + sec.Nombre);
 
@@ -827,31 +836,6 @@ namespace ProyectoSoftwareSistemas
                 }
 
                 wsBloques.Columns().AdjustToContents();
-
-                // ---------- TABSIM ----------
-				var wsSim = workbook.Worksheets.Add("TABSIM_" + sec.Nombre);
-
-				// Encabezados actualizados
-				wsSim.Cell(1, 1).Value = "Simbolo";
-				wsSim.Cell(1, 2).Value = "Direccion";
-				wsSim.Cell(1, 3).Value = "Tipo";
-				wsSim.Cell(1, 4).Value = "NumBloq";
-				wsSim.Cell(1, 5).Value = "SimboloExterno";
-
-				int filaS = 2;
-
-				foreach (var s in sec.TABSIM.Values)
-				{
-					wsSim.Cell(filaS, 1).Value = s.Nombre;
-					wsSim.Cell(filaS, 2).Value = s.Direccion.ToString("X4");
-					wsSim.Cell(filaS, 3).Value = s.Tipo;
-					wsSim.Cell(filaS, 4).Value = s.Bloque; // Representa el bloque al que pertenece
-					wsSim.Cell(filaS, 5).Value = s.Tipo == "E" ? "Sí" : "No"; // Indica si es externo
-
-					filaS++;
-				}
-
-				wsSim.Columns().AdjustToContents();
             }
 
             // =========================
