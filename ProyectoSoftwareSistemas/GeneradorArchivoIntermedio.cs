@@ -763,21 +763,46 @@ namespace ProyectoSoftwareSistemas
 
             worksheet.Columns().AdjustToContents();
 
-            // =========================
-            // HOJA PROGRAMA OBJETO
-            // =========================
+            // ===============================================
+            // HOJAS DE PROGRAMA OBJETO (UNA POR SECCIÓN)
+            // ===============================================
             if (programaObjeto != null && programaObjeto.Count > 0)
             {
-                var wsObjeto = workbook.Worksheets.Add("ProgramaObjeto");
-
+                IXLWorksheet wsActual = null;
                 int filaObj = 1;
+
                 foreach (string registro in programaObjeto)
                 {
-                    wsObjeto.Cell(filaObj, 1).Value = registro;
-                    filaObj++;
-                }
+                    // Cada vez que encontramos un registro 'H', iniciamos una nueva pestaña 
+                    if (registro.StartsWith("H"))
+                    {
+                        string nombreModulo = registro.Substring(1, 6).Trim();
 
-                wsObjeto.Column(1).AdjustToContents();
+                        // Evitar nombres duplicados en pestañas de Excel
+                        string nombreHoja = "ProgObj_" + nombreModulo;
+                        int copia = 1;
+                        while (workbook.Worksheets.Any(w => w.Name == nombreHoja))
+                        {
+                            nombreHoja = "ProgObj_" + nombreModulo + "_" + (copia++);
+                        }
+
+                        wsActual = workbook.Worksheets.Add(nombreHoja);
+                        filaObj = 1;
+                    }
+
+                    // Escribimos el registro en la hoja que esté activa actualmente
+                    if (wsActual != null)
+                    {
+                        wsActual.Cell(filaObj, 1).Value = registro;
+                        filaObj++;
+                    }
+
+                    // Al llegar al final del módulo (E), ajustamos el ancho de columna [cite: 44, 57]
+                    if (registro.StartsWith("E") && wsActual != null)
+                    {
+                        wsActual.Column(1).AdjustToContents();
+                    }
+                }
             }
 
             // =========================

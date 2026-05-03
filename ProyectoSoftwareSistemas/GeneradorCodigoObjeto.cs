@@ -9,20 +9,19 @@ namespace ProyectoSoftwareSistemas
 {
     public class GeneradorCodigoObjeto
     {
+        private List<Seccion> _secciones;
         private Dictionary<string, Simbolo> _tabSim;
         private Dictionary<string, Bloque> _tabblk;
         private List<LineaIntermedia> _lineas;
         private Dictionary<string, int> _registros;
         private int? _baseAddress = null;
         private EvaluadorExpresiones _evaluador;
-
         private Dictionary<string, string> _opcodes;
-        public GeneradorCodigoObjeto(Dictionary<string, Simbolo> TABSIM, List<LineaIntermedia> lineas, Dictionary<string, Bloque> tabblk)
+
+        public GeneradorCodigoObjeto(List<Seccion> secciones, List<LineaIntermedia> lineas)
         {
-            _tabSim = TABSIM;
-            _tabblk = tabblk;
+            _secciones = secciones;
             _lineas = lineas;
-            _evaluador = new EvaluadorExpresiones(_tabSim, _tabblk);
             InicializarOpcodes();
             InicializarRegistros();
         }
@@ -606,9 +605,29 @@ namespace ProyectoSoftwareSistemas
 
         public void Generar()
         {
+            // Empezamos con la tabla de símbolos de la primera sección
+            int seccionIdx = 0;
+            _tabSim = _secciones[seccionIdx].TABSIM;
+            _tabblk = _secciones[seccionIdx].TABBLK;
+            _evaluador = new EvaluadorExpresiones(_tabSim, _tabblk);
 
             foreach (var linea in _lineas)
             {
+                // Si detectamos un cambio de sección, actualizamos los diccionarios
+                if (linea.CodigoOp == "CSECT")
+                {
+                    seccionIdx++;
+                    if (seccionIdx < _secciones.Count)
+                    {
+                        _tabSim = _secciones[seccionIdx].TABSIM;
+                        _tabblk = _secciones[seccionIdx].TABBLK;
+                        _evaluador = new EvaluadorExpresiones(_tabSim, _tabblk); // Reiniciamos el evaluador
+                        _baseAddress = null; // Limpiamos la base anterior
+                    }
+                    linea.CodigoObjeto = "----";
+                    continue;
+                }
+
                 if (linea.CodigoOp == "BASE")
                 {
                     if (_tabSim.ContainsKey(linea.Operador))
