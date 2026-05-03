@@ -140,11 +140,11 @@ namespace ProyectoSoftwareSistemas
                 Dictionary<string, Bloque> tabblk = secciones[0].TABBLK;
 
                 // --- PASADA 2: Código Objeto ---
-                var generadorCodigoObjeto = new GeneradorCodigoObjeto(tabsim, lineas, tabblk);
+                var generadorCodigoObjeto = new GeneradorCodigoObjeto(secciones, lineas);
                 generadorCodigoObjeto.Generar();
 
                 // --- PASADA 3: Registros del Programa Objeto ---
-                var generadorProgramaObjeto = new GeneradorProgramaObjeto(lineas, tabsim, tabblk);
+                var generadorProgramaObjeto = new GeneradorProgramaObjeto(lineas, secciones);
                 List<string> archivoObjeto = generadorProgramaObjeto.Generar();
 
                 // 3. Cargar datos en los DataGridViews
@@ -256,7 +256,31 @@ namespace ProyectoSoftwareSistemas
             ColorearPorSeccion(dgvBloques, "Seccion");
 
             // 4. Programa Objeto
-            dgvObjeto.DataSource = objeto.Select(reg => new { Registro = reg }).ToList();
+            // 4. Programa Objeto con mapeo dinámico de Sección
+            var registrosConSeccion = new List<object>();
+            string seccionActualObj = "DEFAULT";
+
+            foreach (var reg in objeto)
+            {
+                // Cada que detectamos un registro H, extraemos el nombre de la sección (caracteres 1 al 6)
+                if (reg.StartsWith("H") && reg.Length >= 7)
+                {
+                    seccionActualObj = reg.Substring(1, 6).Trim();
+                }
+
+                registrosConSeccion.Add(new { Seccion = seccionActualObj, Registro = reg });
+            }
+
+            dgvObjeto.DataSource = registrosConSeccion;
+
+            // Ocultamos la columna "Seccion" para que solo se vea el texto del código objeto (para no ensuciar la vista)
+            if (dgvObjeto.Columns["Seccion"] != null)
+            {
+                dgvObjeto.Columns["Seccion"].Visible = false;
+            }
+
+            // Aplicamos el color usando la columna oculta
+            ColorearPorSeccion(dgvObjeto, "Seccion");
 
             FormatearGrids();
         }
