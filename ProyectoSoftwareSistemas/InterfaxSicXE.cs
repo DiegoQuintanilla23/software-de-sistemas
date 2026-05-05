@@ -283,6 +283,49 @@ namespace ProyectoSoftwareSistemas
             ColorearPorSeccion(dgvObjeto, "Seccion");
 
             FormatearGrids();
+
+
+            EscribirArchivosObjetoPorSeccion(objeto);
+        }
+
+        private void EscribirArchivosObjetoPorSeccion(List<string> objeto)
+        {
+            string carpetaRaiz = Path.Combine(Directory.GetCurrentDirectory(), "output", "PO");
+
+            if (!Directory.Exists(carpetaRaiz))
+                Directory.CreateDirectory(carpetaRaiz);
+
+            var secciones = new Dictionary<string, List<string>>();
+            string seccionActual = "DEFAULT";
+
+            foreach (var reg in objeto)
+            {
+                if (reg.StartsWith("H") && reg.Length >= 7)
+                {
+                    seccionActual = reg.Substring(1, 6).Trim();
+
+                    if (string.IsNullOrWhiteSpace(seccionActual))
+                        seccionActual = "DEFAULT";
+
+                    if (!secciones.ContainsKey(seccionActual))
+                        secciones[seccionActual] = new List<string>();
+                }
+
+                if (!secciones.ContainsKey(seccionActual))
+                    secciones[seccionActual] = new List<string>();
+
+                secciones[seccionActual].Add(reg);
+            }
+
+            // 🔹 Crear 1 archivo por sección (nombre = CSECT)
+            foreach (var kvp in secciones)
+            {
+                string nombreSeccion = kvp.Key;
+
+                string rutaFinal = Path.Combine(carpetaRaiz, $"{nombreSeccion}.obj");
+
+                File.WriteAllLines(rutaFinal, kvp.Value);
+            }
         }
 
         private void FormatearGrids()
