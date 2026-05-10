@@ -37,6 +37,7 @@
             this.nuevoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.accionesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ensamblarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cargarLigarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.txtEditor = new System.Windows.Forms.RichTextBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -129,7 +130,8 @@
             // accionesToolStripMenuItem
             // 
             this.accionesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ensamblarToolStripMenuItem});
+            this.ensamblarToolStripMenuItem,
+            this.cargarLigarToolStripMenuItem});
             this.accionesToolStripMenuItem.Name = "accionesToolStripMenuItem";
             this.accionesToolStripMenuItem.Size = new System.Drawing.Size(82, 24);
             this.accionesToolStripMenuItem.Text = "Acciones";
@@ -139,9 +141,20 @@
             this.ensamblarToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("ensamblarToolStripMenuItem.Image")));
             this.ensamblarToolStripMenuItem.Name = "ensamblarToolStripMenuItem";
             this.ensamblarToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.ensamblarToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.ensamblarToolStripMenuItem.Size = new System.Drawing.Size(316, 26);
             this.ensamblarToolStripMenuItem.Text = "&Ensamblar";
             this.ensamblarToolStripMenuItem.Click += new System.EventHandler(this.ensamblarToolStripMenuItem_Click);
+            // 
+            // cargarLigarToolStripMenuItem
+            // 
+            this.cargarLigarToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("cargarLigarToolStripMenuItem.Image")));
+            this.cargarLigarToolStripMenuItem.Name = "cargarLigarToolStripMenuItem";
+            this.cargarLigarToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Alt) 
+            | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.F5)));
+            this.cargarLigarToolStripMenuItem.Size = new System.Drawing.Size(316, 26);
+            this.cargarLigarToolStripMenuItem.Text = "&Cargar/Ligar";
+            this.cargarLigarToolStripMenuItem.Click += new System.EventHandler(this.cargarLigarToolStripMenuItem_Click);
             // 
             // splitContainer1
             // 
@@ -352,5 +365,6 @@
         private System.Windows.Forms.DataGridView dgvObjeto;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.ToolStripMenuItem cargarLigarToolStripMenuItem;
     }
 }
