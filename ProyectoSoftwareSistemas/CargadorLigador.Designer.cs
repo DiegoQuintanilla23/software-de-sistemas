@@ -28,8 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CargadorLigador));
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.txtTamprog = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.btnLimpiar = new System.Windows.Forms.Button();
             this.btnEjecutarPaso2 = new System.Windows.Forms.Button();
             this.btnCargarPaso1 = new System.Windows.Forms.Button();
@@ -40,8 +43,6 @@
             this.lstArchivos = new System.Windows.Forms.ListBox();
             this.dgvTabse = new System.Windows.Forms.DataGridView();
             this.dgvMemoria = new System.Windows.Forms.DataGridView();
-            this.label1 = new System.Windows.Forms.Label();
-            this.txtTamprog = new System.Windows.Forms.TextBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -74,11 +75,30 @@
             this.panel1.Size = new System.Drawing.Size(1060, 125);
             this.panel1.TabIndex = 0;
             // 
+            // txtTamprog
+            // 
+            this.txtTamprog.Enabled = false;
+            this.txtTamprog.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtTamprog.Location = new System.Drawing.Point(679, 22);
+            this.txtTamprog.Name = "txtTamprog";
+            this.txtTamprog.ReadOnly = true;
+            this.txtTamprog.Size = new System.Drawing.Size(168, 30);
+            this.txtTamprog.TabIndex = 12;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(429, 22);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(252, 29);
+            this.label1.TabIndex = 11;
+            this.label1.Text = "Tamaño de programa:";
+            // 
             // btnLimpiar
             // 
-            this.btnLimpiar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnLimpiar.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnLimpiar.Location = new System.Drawing.Point(893, 22);
+            this.btnLimpiar.Location = new System.Drawing.Point(339, 72);
             this.btnLimpiar.Name = "btnLimpiar";
             this.btnLimpiar.Size = new System.Drawing.Size(155, 29);
             this.btnLimpiar.TabIndex = 10;
@@ -122,7 +142,7 @@
             this.lblDireccionEjecucion.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblDireccionEjecucion.Location = new System.Drawing.Point(12, 21);
             this.lblDireccionEjecucion.Name = "lblDireccionEjecucion";
-            this.lblDireccionEjecucion.Size = new System.Drawing.Size(276, 36);
+            this.lblDireccionEjecucion.Size = new System.Drawing.Size(221, 29);
             this.lblDireccionEjecucion.TabIndex = 6;
             this.lblDireccionEjecucion.Text = "Dirección de carga:";
             // 
@@ -193,26 +213,6 @@
             this.dgvMemoria.Size = new System.Drawing.Size(703, 453);
             this.dgvMemoria.TabIndex = 0;
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(429, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(315, 36);
-            this.label1.TabIndex = 11;
-            this.label1.Text = "Tamaño de programa:";
-            // 
-            // txtTamprog
-            // 
-            this.txtTamprog.Enabled = false;
-            this.txtTamprog.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtTamprog.Location = new System.Drawing.Point(679, 22);
-            this.txtTamprog.Name = "txtTamprog";
-            this.txtTamprog.ReadOnly = true;
-            this.txtTamprog.Size = new System.Drawing.Size(168, 30);
-            this.txtTamprog.TabIndex = 12;
-            // 
             // CargadorLigador
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -220,6 +220,7 @@
             this.ClientSize = new System.Drawing.Size(1060, 578);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.panel1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "CargadorLigador";
             this.Text = "CargadorLigador";
             this.Load += new System.EventHandler(this.CargadorLigador_Load);

@@ -62,7 +62,6 @@ namespace ProyectoSoftwareSistemas
 
                 // --- LA MAGIA RESPONSIVA ESTÁ AQUÍ ---
                 dgvMemoria.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                // -------------------------------------
 
                 dgvMemoria.AllowUserToAddRows = false;
                 dgvMemoria.RowHeadersVisible = false;
@@ -145,9 +144,6 @@ namespace ProyectoSoftwareSistemas
             dgvMemoria.Rows.Clear();
         }
 
-        // =========================================================================
-        // ALGORITMO PASO 1. CARGADOR LIGADOR
-        // =========================================================================
         // =========================================================================
         // ALGORITMO PASO 1. CARGADOR LIGADOR
         // =========================================================================
@@ -401,8 +397,6 @@ namespace ProyectoSoftwareSistemas
                     }
                 }
 
-                // COMPRESIÓN: Si la fila entera es puro 'FF' inventado, la saltamos.
-                // Ponemos "..." para igualar el formato de presentación del PDF.
                 if (!filaTieneDatos)
                 {
                     if (!ultimoFueVacio)
@@ -435,7 +429,7 @@ namespace ProyectoSoftwareSistemas
                     else
                     {
                         row.Cells[i + 1].Value = "FF";
-                        row.Cells[i + 1].Style.ForeColor = Color.LightGray;
+                        row.Cells[i + 1].Style.ForeColor = Color.DarkSlateGray;
                     }
                 }
 
