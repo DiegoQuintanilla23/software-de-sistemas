@@ -38,6 +38,12 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>icons8-compilador-64_1.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr4.Runtime, Version=4.6.0.0, Culture=neutral, PublicKeyToken=09abb75b9ed49849, processorArchitecture=MSIL">
       <HintPath>packages\Antlr4.Runtime.4.6.6\lib\net45\Antlr4.Runtime.dll</HintPath>
@@ -93,6 +99,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bloque.cs" />
+    <Compile Include="CargadorLigador.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CargadorLigador.Designer.cs">
+      <DependentUpon>CargadorLigador.cs</DependentUpon>
+    </Compile>
     <Compile Include="EvaluadorExpresiones.cs" />
     <Compile Include="GeneradorArchivoIntermedio.cs" />
     <Compile Include="GeneradorCodigoObjeto.cs" />
@@ -115,9 +127,13 @@
   <ItemGroup>
     <None Include="App.config" />
     <Antlr4 Include="SICXE.g" />
+    <None Include="app.manifest" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CargadorLigador.resx">
+      <DependentUpon>CargadorLigador.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="InterfaxSicXE.resx">
       <DependentUpon>InterfaxSicXE.cs</DependentUpon>
     </EmbeddedResource>
@@ -125,6 +141,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="icons8-compilador-64_1.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -385,6 +385,12 @@ namespace ProyectoSoftwareSistemas
             }
         }
 
+        private void cargarLigarToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //Abir forms para cargar archivos de ligador
+            CargadorLigador cargadorLigador = new CargadorLigador();
+            cargadorLigador.Show();
+        }
     }
 
     public class ParserErrorListener : BaseErrorListener

@@ -37,6 +37,7 @@
             this.nuevoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.accionesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ensamblarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cargarLigarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.txtEditor = new System.Windows.Forms.RichTextBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -129,7 +130,8 @@
             // accionesToolStripMenuItem
             // 
             this.accionesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ensamblarToolStripMenuItem});
+            this.ensamblarToolStripMenuItem,
+            this.cargarLigarToolStripMenuItem});
             this.accionesToolStripMenuItem.Name = "accionesToolStripMenuItem";
             this.accionesToolStripMenuItem.Size = new System.Drawing.Size(82, 24);
             this.accionesToolStripMenuItem.Text = "Acciones";
@@ -139,9 +141,18 @@
             this.ensamblarToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("ensamblarToolStripMenuItem.Image")));
             this.ensamblarToolStripMenuItem.Name = "ensamblarToolStripMenuItem";
             this.ensamblarToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.ensamblarToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.ensamblarToolStripMenuItem.Size = new System.Drawing.Size(199, 26);
             this.ensamblarToolStripMenuItem.Text = "&Ensamblar";
             this.ensamblarToolStripMenuItem.Click += new System.EventHandler(this.ensamblarToolStripMenuItem_Click);
+            // 
+            // cargarLigarToolStripMenuItem
+            // 
+            this.cargarLigarToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("cargarLigarToolStripMenuItem.Image")));
+            this.cargarLigarToolStripMenuItem.Name = "cargarLigarToolStripMenuItem";
+            this.cargarLigarToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F7;
+            this.cargarLigarToolStripMenuItem.Size = new System.Drawing.Size(199, 26);
+            this.cargarLigarToolStripMenuItem.Text = "&Cargar/Ligar";
+            this.cargarLigarToolStripMenuItem.Click += new System.EventHandler(this.cargarLigarToolStripMenuItem_Click);
             // 
             // splitContainer1
             // 
@@ -158,7 +169,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.tableLayoutPanel1);
             this.splitContainer1.Size = new System.Drawing.Size(1183, 579);
-            this.splitContainer1.SplitterDistance = 276;
+            this.splitContainer1.SplitterDistance = 275;
             this.splitContainer1.TabIndex = 1;
             // 
             // txtEditor
@@ -168,7 +179,7 @@
             this.txtEditor.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtEditor.Location = new System.Drawing.Point(0, 0);
             this.txtEditor.Name = "txtEditor";
-            this.txtEditor.Size = new System.Drawing.Size(1183, 276);
+            this.txtEditor.Size = new System.Drawing.Size(1183, 275);
             this.txtEditor.TabIndex = 0;
             this.txtEditor.Text = "";
             this.txtEditor.WordWrap = false;
@@ -188,7 +199,7 @@
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1183, 299);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1183, 300);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // groupBox1
@@ -197,7 +208,7 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(585, 143);
+            this.groupBox1.Size = new System.Drawing.Size(585, 144);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Archivo Intermedio";
@@ -214,7 +225,7 @@
             this.dgvIntermedio.RowHeadersVisible = false;
             this.dgvIntermedio.RowHeadersWidth = 51;
             this.dgvIntermedio.RowTemplate.Height = 24;
-            this.dgvIntermedio.Size = new System.Drawing.Size(579, 122);
+            this.dgvIntermedio.Size = new System.Drawing.Size(579, 123);
             this.dgvIntermedio.TabIndex = 0;
             // 
             // groupBox2
@@ -223,7 +234,7 @@
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox2.Location = new System.Drawing.Point(594, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(586, 143);
+            this.groupBox2.Size = new System.Drawing.Size(586, 144);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "TABSIM";
@@ -240,14 +251,14 @@
             this.dgvTabsim.RowHeadersVisible = false;
             this.dgvTabsim.RowHeadersWidth = 51;
             this.dgvTabsim.RowTemplate.Height = 24;
-            this.dgvTabsim.Size = new System.Drawing.Size(580, 122);
+            this.dgvTabsim.Size = new System.Drawing.Size(580, 123);
             this.dgvTabsim.TabIndex = 0;
             // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.dgvBloques);
             this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox3.Location = new System.Drawing.Point(3, 152);
+            this.groupBox3.Location = new System.Drawing.Point(3, 153);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(585, 144);
             this.groupBox3.TabIndex = 2;
@@ -273,7 +284,7 @@
             // 
             this.groupBox4.Controls.Add(this.dgvObjeto);
             this.groupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox4.Location = new System.Drawing.Point(594, 152);
+            this.groupBox4.Location = new System.Drawing.Point(594, 153);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(586, 144);
             this.groupBox4.TabIndex = 3;
@@ -306,6 +317,7 @@
             this.ClientSize = new System.Drawing.Size(1183, 607);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "InterfazSicXE";
             this.Text = "InterfaxSicXE";
@@ -352,5 +364,6 @@
         private System.Windows.Forms.DataGridView dgvObjeto;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.ToolStripMenuItem cargarLigarToolStripMenuItem;
     }
 }

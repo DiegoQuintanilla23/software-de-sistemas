@@ -1,0 +1,6 @@
+C:\Users\vils1\OneDrive\Escritorio\Uni\Semestre 10\FSWS\Laboratorio\software-de-sistemas\ProyectoSoftwareSistemas\obj\Release\SICXELexer.cs
+C:\Users\vils1\OneDrive\Escritorio\Uni\Semestre 10\FSWS\Laboratorio\software-de-sistemas\ProyectoSoftwareSistemas\obj\Release\SICXEParser.cs
+C:\Users\vils1\OneDrive\Escritorio\Uni\Semestre 10\FSWS\Laboratorio\software-de-sistemas\ProyectoSoftwareSistemas\obj\Release\SICXEListener.cs
+C:\Users\vils1\OneDrive\Escritorio\Uni\Semestre 10\FSWS\Laboratorio\software-de-sistemas\ProyectoSoftwareSistemas\obj\Release\SICXEBaseListener.cs
+C:\Users\vils1\OneDrive\Escritorio\Uni\Semestre 10\FSWS\Laboratorio\software-de-sistemas\ProyectoSoftwareSistemas\obj\Release\SICXEVisitor.cs
+C:\Users\vils1\OneDrive\Escritorio\Uni\Semestre 10\FSWS\Laboratorio\software-de-sistemas\ProyectoSoftwareSistemas\obj\Release\SICXEBaseVisitor.cs
